@@ -1,0 +1,152 @@
+"use client";
+
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Hero from "@/components/Hero";
+import IdeaForm from "@/components/IdeaForm";
+import LoadingState from "@/components/LoadingState";
+import ResultsDisplay from "@/components/ResultsDisplay";
+import NetworkBackground from "@/components/NetworkBackground";
+import { cn } from "@/lib/utils";
+
+type AppState = "LANDING" | "FORM" | "LOADING" | "RESULTS";
+
+export default function Home() {
+  const [state, setState] = useState<AppState>("LANDING");
+  const [result, setResult] = useState<any>(null);
+  const [inputIntensity, setInputIntensity] = useState(0);
+
+  const [brutality, setBrutality] = useState(3);
+
+  const handleStart = (level: number) => {
+    setBrutality(level);
+    setState("FORM");
+  };
+
+  const handleSubmit = async (formData: any) => {
+    setState("LOADING");
+    
+    try {
+      const response = await fetch("/api/roast", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+      setResult(data);
+      setState("RESULTS");
+    } catch (error) {
+      console.error("Failed to roast idea:", error);
+      setState("FORM");
+    }
+  };
+
+  const handleRetry = () => {
+    setResult(null);
+    setState("FORM");
+  };
+
+  return (
+    <main className="min-h-screen bg-black relative selection:bg-gold selection:text-black overflow-x-hidden font-sans">
+      {/* Interrogation Watermarks - Atmospheric */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-[0.03]">
+        <motion.div 
+          animate={{ y: [0, -20, 0] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+          className="absolute top-[10%] left-[5%] text-[15vw] font-black uppercase leading-none select-none"
+        >
+          What is the problem?
+        </motion.div>
+        <motion.div 
+          animate={{ y: [0, 20, 0] }}
+          transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+          className="absolute bottom-[20%] right-[5%] text-[12vw] font-black uppercase leading-none select-none text-right"
+        >
+          How do you make money?
+        </motion.div>
+        <motion.div 
+          animate={{ x: [0, 30, 0] }}
+          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+          className="absolute top-[40%] right-[10%] text-[10vw] font-black uppercase leading-none select-none opacity-50"
+        >
+          Target Audience?
+        </motion.div>
+      </div>
+
+      {/* Network Reactive Background - HIDDEN on Results for absolute clarity */}
+      {state !== "RESULTS" && <NetworkBackground intensity={inputIntensity} state={state} />}
+
+      <div className="max-w-7xl mx-auto px-4 relative z-10">
+        <AnimatePresence mode="wait">
+          {state === "LANDING" && (
+            <motion.div
+              key="landing"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Hero onStart={handleStart} />
+            </motion.div>
+          )}
+
+          {state === "FORM" && (
+            <motion.div
+              key="form"
+              initial={{ opacity: 0, scale: 1.02 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.3 }}
+              className="pt-20"
+            >
+              <IdeaForm onSubmit={handleSubmit} onInputChange={setInputIntensity} />
+            </motion.div>
+          )}
+
+          {state === "LOADING" && (
+            <motion.div
+              key="loading"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="pt-32"
+            >
+              <LoadingState />
+            </motion.div>
+          )}
+
+          {state === "RESULTS" && result && (
+            <motion.div
+              key="results"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <ResultsDisplay data={result} onRetry={handleRetry} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Subject Data Details - Clearer/Sharp */}
+      <div className="fixed top-8 right-8 z-[60] hidden md:flex flex-col items-end opacity-40 pointer-events-none">
+        <span className="text-[10px] font-black tracking-[0.5em] uppercase text-white">System_Status_Ready</span>
+      </div>
+
+      {/* Footer Branding */}
+      <footer className="relative md:fixed bottom-0 left-0 w-full p-8 flex flex-col md:flex-row justify-between items-center md:items-end pointer-events-none z-50 gap-4">
+        <div className="flex flex-col items-center md:items-start">
+          <span className="text-[10px] font-black text-gold uppercase tracking-[0.5em] mb-2 opacity-50">
+            Truth_Engine_v1.0
+          </span>
+          <h3 className="text-xl font-black text-white leading-none">BRUTALLY HONEST.</h3>
+        </div>
+        <div className="text-[10px] font-mono text-white/20 text-center md:text-right">
+          PROD_READY // INTERNAL_USE_ONLY
+        </div>
+      </footer>
+    </main>
+  );
+}
