@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚩 Brutally Honest: The Interrogation Engine
 
-## Getting Started
+**Brutally Honest** is a cinematic, AI-powered startup roasting platform. It uses deep analysis to identify fatal flaws in business models while exploring alternate "Unicorn" realities.
 
-First, run the development server:
+## 🎭 Experience Features
+- **Cinematic Interrogation**: A high-tension, step-by-step interrogation flow.
+* **Multiple Realities**: Toggle between "The Truth" (Brutal Roast) and "The Delusion" (Success Timeline).
+- **Investor Memo Mode**: Professional VC-style analysis for high-end founders.
+- **Neural Network Background**: Reactive canvas background that grows with your input.
+- **Wall of Truth**: Live autopsy feed of famous startup failures.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Deployment (Make it Live)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This is a **Next.js 15** application. To make it live from GitHub:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 1. Push to GitHub
+1. Create a new repository on [GitHub](https://github.com/new).
+2. Copy your repository URL.
+3. Run the following commands in your terminal:
+   ```bash
+   git remote add origin YOUR_REPOSITORY_URL
+   git branch -M main
+   git push -u origin main
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 2. Connect to Vercel (Recommended)
+Since this app uses an API route (`/api/roast`), standard GitHub Pages won't work. We recommend **Vercel**:
+1. Go to [Vercel](https://vercel.com).
+2. Click **"Add New"** > **"Project"**.
+3. Import your GitHub repository.
+4. Click **"Deploy"**.
 
-## Learn More
+## 🛠️ Tech Stack
+- **Framework**: Next.js 15 (App Router)
+- **Styling**: Tailwind CSS
+- **Animations**: Framer Motion
+- **Icons**: Lucide React
+- **Background**: Custom Canvas Engine
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+*Developed with intensity. Your startup idea is probably bad. We prove it.*
