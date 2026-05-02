@@ -13,15 +13,8 @@
 
 This is a **Next.js 15** application. To make it live from GitHub:
 
-### 1. Push to GitHub
-1. Create a new repository on [GitHub](https://github.com/new).
-2. Copy your repository URL.
-3. Run the following commands in your terminal:
-   ```bash
-   git remote add origin YOUR_REPOSITORY_URL
-   git branch -M main
-   git push -u origin main
-   ```
+### 1. Repository Link
+View the source on GitHub: [shadesvinay01/brutallyhonest_new](https://github.com/shadesvinay01/brutallyhonest_new)
 
 ### 2. Connect to Vercel (Recommended)
 Since this app uses an API route (`/api/roast`), standard GitHub Pages won't work. We recommend **Vercel**:
