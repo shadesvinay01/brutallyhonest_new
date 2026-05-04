@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Trophy, Award, Zap } from "lucide-react";
+import { Trophy, Award, Zap, Skull } from "lucide-react";
 
 const topRoasters = [
   { name: "SavageTiger92", karma: 12400, roasts: 452, rank: 1 },
