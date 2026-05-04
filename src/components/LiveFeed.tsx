@@ -1,156 +1,170 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { MessageCircle, Flame, Skull, Laugh, ArrowBigUp, ArrowBigDown, Share2, AlertTriangle } from "lucide-react";
+import { MessageCircle, Flame, Skull, Laugh, ArrowBigUp, ArrowBigDown, Share2, AlertTriangle, Shield, Zap } from "lucide-react";
 import { useState } from "react";
 
 const mockPosts = [
   {
     id: 1,
-    author: "SavageTiger92",
+    author: "BurnerAccount_99",
+    rank: "Casualty",
     category: "Startup",
-    content: "Rate my startup idea: An AI that tells you which of your friends are actually fake.",
-    topReply: "Solving a problem that doesn't exist with technology no one wants. Classic.",
-    comments: 42,
-    votes: 156,
-    savageLevel: 85,
-    reactions: { flame: 24, skull: 12, laugh: 8 }
+    content: "My startup is a 'subscription for clean air' for city dwellers. $50/mo for a portable filtration mask.",
+    replies: [
+      { user: "VCOrdinary", text: "You're selling a filter. It's called a mask. We had a pandemic, remember?", votes: 120, isHighlight: true },
+      { user: "TruthDealer", text: "Unit economics are a nightmare. Your customer acquisition cost is higher than their oxygen intake.", votes: 85 }
+    ],
+    votes: -245,
+    savageLevel: 98,
+    isViral: true
   },
   {
     id: 2,
-    author: "ChaosKing_01",
+    author: "ResumeReviewer",
+    rank: "Elite Roaster",
     category: "Career",
-    content: "Am I making a bad career move by quitting my 200k job to become a full-time professional whistler?",
-    topReply: "You're not 'following your passion', you're having a mid-life crisis on a budget.",
-    comments: 89,
-    votes: -42,
-    savageLevel: 98,
-    reactions: { flame: 5, skull: 67, laugh: 112 }
+    content: "Rate my resume: 10 years at Google but 0 side projects. Am I a boring corporate cog?",
+    replies: [
+      { user: "StartupJunky", text: "You're not a cog, you're the grease. Replaceable and easily ignored.", votes: 450, isHighlight: true },
+      { user: "HiringManager", text: "I'd pass. You sound like you wait for instructions instead of building.", votes: 310 }
+    ],
+    votes: 520,
+    savageLevel: 82,
+    isViral: false
   },
   {
     id: 3,
-    author: "DigitalGhost",
-    category: "Lifestyle",
-    content: "Be honest, how do I look in this $5,000 digital-only designer tracksuit?",
-    topReply: "You look like someone who has more crypto than common sense.",
-    comments: 12,
-    votes: -10,
-    savageLevel: 92,
-    reactions: { flame: 2, skull: 45, laugh: 89 }
+    author: "LooksMaxxer",
+    rank: "Truth Seeker",
+    category: "Looks",
+    content: "Be honest, do I have 'main character' energy in this $2k suit?",
+    replies: [
+      { user: "StyleGoru", text: "You have 'background actor in a debt collector commercial' energy.", votes: 890, isHighlight: true },
+      { user: "BrutalBoi", text: "The suit is $2k, but the confidence is clearly rented.", votes: 412 }
+    ],
+    votes: -12,
+    savageLevel: 95,
+    isViral: true
   }
 ];
 
 export default function LiveFeed() {
   return (
-    <section className="py-32 bg-zinc-950 relative border-y border-white/10">
+    <section className="py-32 bg-black relative border-y border-white/10">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
           <div>
-            <h2 className="text-4xl md:text-7xl font-black text-white uppercase tracking-tighter">
-              Live <span className="text-red-600">Feed</span>
+            <h2 className="text-4xl md:text-7xl font-black text-white uppercase tracking-tighter italic">
+              The <span className="text-gold">War Room</span>
             </h2>
             <p className="text-white/40 font-mono mt-4 uppercase tracking-widest">
-              // RECENT_INTERROGATIONS_IN_PROGRESS
+              // HIGH_INTENSITY_ENGAGEMENT_FEED
             </p>
           </div>
           <div className="flex gap-4">
-            <span className="px-4 py-2 bg-red-600 text-white font-black text-xs uppercase tracking-widest animate-pulse">
-              LIVE_DATA
+            <span className="px-4 py-2 bg-gold text-black font-black text-xs uppercase tracking-widest animate-pulse">
+              LIVE_INTERROGATIONS
             </span>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {mockPosts.map((post, index) => (
             <motion.div
               key={post.id}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="bg-black border-2 border-white/10 p-8 flex flex-col gap-6 hover:border-red-600/30 transition-all relative overflow-hidden group shadow-[10px_10px_0px_0px_rgba(255,255,255,0.02)]"
+              className="bg-zinc-950 border-4 border-white/5 p-8 flex flex-col gap-8 hover:border-gold/20 transition-all relative group shadow-[15px_15px_0px_0px_rgba(212,175,55,0.02)]"
             >
-              {/* Savage Meter Background */}
-              <div 
-                className="absolute top-0 left-0 h-1 bg-red-600 transition-all duration-1000"
-                style={{ width: `${post.savageLevel}%` }}
-              />
-
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 bg-white/5 text-[8px] font-black text-white uppercase tracking-widest border border-white/10">
-                    {post.category}
-                  </span>
-                  {post.category === "Looks" && (
-                    <span className="text-[8px] font-black text-red-600 uppercase tracking-widest animate-pulse flex items-center gap-1">
-                      <AlertTriangle className="w-2 h-2" /> DANGER_ZONE
+              {/* Post Header */}
+              <div className="flex justify-between items-start">
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black text-white uppercase tracking-widest">
+                      @{post.author}
                     </span>
-                  )}
+                    <span className="px-2 py-0.5 bg-white/10 text-[6px] font-black text-white/60 uppercase tracking-widest rounded-full">
+                      {post.rank}
+                    </span>
+                  </div>
+                  <span className="text-[8px] font-black text-white/20 uppercase tracking-[0.2em]">
+                    Subject: {post.category}
+                  </span>
                 </div>
-                <div className="flex items-center gap-1 text-red-600">
-                  <Skull className="w-3 h-3" />
-                  <span className="text-[10px] font-black uppercase tracking-tighter">{post.savageLevel}% SAVAGE</span>
-                </div>
+                {post.isViral && (
+                  <div className="flex items-center gap-2 text-orange-500 animate-bounce">
+                    <Flame className="w-4 h-4 fill-current" />
+                    <span className="text-[8px] font-black uppercase">Viral</span>
+                  </div>
+                )}
               </div>
 
-              <h4 className="text-2xl md:text-3xl font-black text-white leading-[1.1] uppercase tracking-tight">
+              {/* Main Content */}
+              <h4 className="text-2xl md:text-4xl font-black text-white leading-tight uppercase italic tracking-tighter">
                 "{post.content}"
               </h4>
 
-              {/* Best Roast Highlight */}
-              <div className="p-4 bg-red-600/10 border-l-4 border-red-600 relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-1 bg-red-600 text-[6px] font-black text-white uppercase tracking-widest">
-                  BEST_ROAST
-                </div>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-[8px] font-black text-red-600 uppercase tracking-widest">@TheExecutioner</span>
-                </div>
-                <p className="text-sm font-bold text-white italic leading-snug">
-                  "{post.topReply}"
-                </p>
+              {/* Threaded Replies */}
+              <div className="space-y-4 pl-4 border-l-2 border-white/10">
+                {post.replies.map((reply, ri) => (
+                  <div key={ri} className={`p-4 ${reply.isHighlight ? "bg-red-600/10 border border-red-600/30" : "bg-white/5"} relative`}>
+                    {reply.isHighlight && (
+                      <div className="absolute -top-2 -right-2 px-2 py-1 bg-red-600 text-[6px] font-black text-white uppercase tracking-widest italic">
+                        TOP_ROAST
+                      </div>
+                    )}
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-[8px] font-black text-white/40 uppercase">@{reply.user}</span>
+                      <span className="text-[8px] font-black text-red-600 uppercase italic">{reply.votes} Upvotes</span>
+                    </div>
+                    <p className="text-sm font-bold text-white uppercase leading-snug">
+                      "{reply.text}"
+                    </p>
+                  </div>
+                ))}
+                <button className="text-[8px] font-black text-gold uppercase tracking-widest hover:underline py-2">
+                  + View 12 more replies
+                </button>
               </div>
 
-              <div className="mt-auto pt-6 border-t border-white/5 flex flex-col gap-4">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2 bg-white/5 p-2 rounded">
-                      <ArrowBigUp className="w-6 h-6 text-white/40 hover:text-green-500 cursor-pointer transition-colors" />
-                      <span className="text-sm font-black text-white">{post.votes}</span>
-                      <ArrowBigDown className="w-6 h-6 text-white/40 hover:text-red-600 cursor-pointer transition-colors" />
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-end">
-                    <button className="text-[8px] font-black text-gold uppercase tracking-widest hover:underline flex items-center gap-2">
-                      <Share2 className="w-3 h-3" /> Share Roast
-                    </button>
-                    <span className="text-[6px] font-mono text-white/20 uppercase tracking-widest mt-1">
-                      // ID_{post.id}_V{post.votes}
-                    </span>
-                  </div>
+              {/* Interaction Bar */}
+              <div className="mt-auto pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
+                <div className="flex items-center gap-4 bg-white/5 p-2 border border-white/10">
+                  <button className="p-2 hover:bg-green-600/20 group/up transition-all">
+                    <ArrowBigUp className="w-6 h-6 text-white/20 group-hover/up:text-green-500" />
+                  </button>
+                  <span className={`text-xl font-black italic ${post.votes > 0 ? "text-green-500" : "text-red-600"}`}>
+                    {post.votes}
+                  </span>
+                  <button className="p-2 hover:bg-red-600/20 group/down transition-all">
+                    <ArrowBigDown className="w-6 h-6 text-white/20 group-hover/down:text-red-600" />
+                  </button>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2">
-                  <button className="py-3 bg-zinc-900 border border-white/5 hover:bg-zinc-800 transition-colors flex flex-col items-center justify-center group/btn">
-                    <Flame className="w-4 h-4 text-orange-500 group-hover/btn:scale-125 transition-transform" />
-                    <span className="text-[8px] font-black text-white/40 mt-1 uppercase">Heat</span>
-                  </button>
-                  <button className="py-3 bg-zinc-900 border border-white/5 hover:bg-zinc-800 transition-colors flex flex-col items-center justify-center group/btn">
-                    <Skull className="w-4 h-4 text-white group-hover/btn:scale-125 transition-transform" />
-                    <span className="text-[8px] font-black text-white/40 mt-1 uppercase">Dead</span>
-                  </button>
-                  <button className="py-3 bg-zinc-900 border border-white/5 hover:bg-zinc-800 transition-colors flex flex-col items-center justify-center group/btn">
-                    <Laugh className="w-4 h-4 text-yellow-500 group-hover/btn:scale-125 transition-transform" />
-                    <span className="text-[8px] font-black text-white/40 mt-1 uppercase">Laugh</span>
-                  </button>
+                <div className="flex gap-4 items-center">
+                  <div className="flex flex-col items-end">
+                    <button className="px-6 py-3 bg-gold text-black font-black uppercase text-[10px] tracking-widest hover:bg-white transition-all flex items-center gap-2">
+                      <Share2 className="w-4 h-4" /> Share Roast
+                    </button>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <Skull className="w-5 h-5 text-red-600 mb-1" />
+                    <span className="text-[8px] font-black text-red-600 uppercase tracking-tighter">
+                      {post.savageLevel}% Dead
+                    </span>
+                  </div>
                 </div>
               </div>
             </motion.div>
           ))}
         </div>
 
-        <div className="mt-16 text-center">
-          <button className="px-8 py-4 border-2 border-gold text-gold font-black uppercase tracking-widest hover:bg-gold hover:text-black transition-all brutalist-border">
-            View All Opinions
+        <div className="mt-20 text-center">
+          <button className="px-12 py-6 bg-transparent border-4 border-gold text-gold font-black uppercase tracking-[0.4em] text-xl hover:bg-gold hover:text-black transition-all brutalist-border-gold">
+            Enter the Deep Feed
           </button>
         </div>
       </div>

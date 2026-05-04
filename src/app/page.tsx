@@ -60,6 +60,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-black relative selection:bg-gold selection:text-black overflow-x-hidden font-sans">
       <div className="particles-bg" />
+      <div className="scanner-line" />
       {/* Interrogation Watermarks - Atmospheric */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-[0.03]">
         <motion.div 

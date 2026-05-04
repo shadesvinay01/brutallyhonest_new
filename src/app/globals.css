@@ -58,9 +58,26 @@ body {
   opacity: 0.5;
 }
 
-@keyframes slow-particle-drift {
-  from { transform: translate(0, 0) rotate(0deg); }
-  to { transform: translate(-100px, -100px) rotate(5deg); }
+/* Interrogation Scanner Effect */
+.scanner-line {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+  box-shadow: 0 0 15px #D4AF37;
+  z-index: 55;
+  pointer-events: none;
+  opacity: 0.1;
+  animation: scan-vertical 12s linear infinite;
+}
+
+@keyframes scan-vertical {
+  0% { top: 0; opacity: 0; }
+  5% { opacity: 0.2; }
+  95% { opacity: 0.2; }
+  100% { top: 100%; opacity: 0; }
 }
 
 .brutalist-border-gold {
