@@ -124,7 +124,7 @@ export default function ResultsDisplay({ data, onRetry }: ResultsProps) {
 
               {card.type === "list" && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {card.items.map((item: any, i: number) => (
+                  {card.items?.map((item: any, i: number) => (
                     <div key={i} className="p-6 bg-white/5 border border-white/10 space-y-3">
                       <h4 className="text-xl font-black text-white uppercase">{item.name}</h4>
                       <p className="text-xs text-white/60"><span className="text-red-600 font-bold uppercase tracking-widest">WHAT:</span> {item.whatTheyDo}</p>
@@ -134,7 +134,7 @@ export default function ResultsDisplay({ data, onRetry }: ResultsProps) {
                 </div>
               )}
 
-              {card.type === "grid" && (
+              {card.type === "grid" && card.data && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   {Object.entries(card.data).map(([key, val]: any, i) => (
                     <div key={i} className="space-y-2">
@@ -145,7 +145,7 @@ export default function ResultsDisplay({ data, onRetry }: ResultsProps) {
                 </div>
               )}
 
-              {card.type === "improvement" && (
+              {card.type === "improvement" && card.data && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="p-8 bg-gold/5 border-l-8 border-gold space-y-4 col-span-1 md:col-span-2">
                     <h4 className="text-gold font-black uppercase text-xs tracking-widest flex items-center gap-2">
@@ -172,7 +172,7 @@ export default function ResultsDisplay({ data, onRetry }: ResultsProps) {
 
               {card.type === "chips" && (
                 <div className="flex flex-wrap gap-4">
-                  {card.items.map((item: string, i: number) => (
+                  {card.items?.map((item: string, i: number) => (
                     <div key={i} className="px-6 py-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-500 font-black uppercase text-xs tracking-widest">
                       {item}
                     </div>
