@@ -48,18 +48,10 @@ const intelligenceStream = [
 ];
 
 export default function Hero({ onStart }: HeroProps) {
-  const [showSubtext, setShowSubtext] = useState(false);
-  const [showControls, setShowControls] = useState(false);
   const [brutality, setBrutality] = useState(3);
 
-  const brutalityLevels = [
-    { level: 1, label: "POLITE INVESTOR", color: "text-green-500" },
-    { level: 2, label: "REALIST", color: "text-gold" },
-    { level: 3, label: "BRUTALLY HONEST", color: "text-red-600" }
-  ];
-
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center px-4 overflow-hidden pt-20">
+    <div className="relative min-h-[90vh] flex flex-col items-center justify-center px-4 overflow-hidden pt-20">
       {/* Wall of Truth Ticker */}
       <div className="absolute top-0 left-0 w-full bg-red-600/10 border-b border-red-600/20 py-2 overflow-hidden whitespace-nowrap z-20">
         <motion.div 
@@ -76,102 +68,61 @@ export default function Hero({ onStart }: HeroProps) {
         </motion.div>
       </div>
 
-      {/* Anonymized Intelligence Stream */}
-      <div className="absolute top-20 left-8 hidden lg:block z-10 space-y-4 opacity-20 pointer-events-none">
-        {intelligenceStream.map((s, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: i * 2, duration: 1 }}
-            className="text-[8px] font-mono text-white tracking-widest bg-white/5 p-2 border-l border-white/20"
-          >
-            {s}
-          </motion.div>
-        ))}
-      </div>
-
       <div className="relative z-20 w-full max-w-5xl mx-auto text-center space-y-12">
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
           className="space-y-6"
         >
-          <h1 className="text-4xl sm:text-5xl md:text-8xl font-black tracking-tighter text-white leading-[0.9]">
-            <Typewriter text="Your idea sounds good." delay={500} onComplete={() => setShowSubtext(true)} />
-            <br />
-            <span className="text-gold italic">
-              <Typewriter text="It isn’t." delay={2000} onComplete={() => setShowControls(true)} />
+          <h1 className="text-5xl sm:text-7xl md:text-9xl font-black tracking-tighter text-white leading-[0.8] uppercase min-h-[2.4em] md:min-h-[1.6em]">
+            <Typewriter text="Get Brutally Honest" delay={500} /> <br />
+            <span className="text-gold">
+              <Typewriter text="Feedback." delay={1500} />
             </span>
           </h1>
-          
-          <AnimatePresence>
-            {showSubtext && (
-              <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-lg md:text-2xl text-white/40 uppercase tracking-[0.3em] font-medium max-w-3xl mx-auto leading-relaxed"
-              >
-                Get the truth before you waste months building a failure.
-              </motion.p>
-            )}
-          </AnimatePresence>
+          <p className="text-xl md:text-3xl text-white/60 font-medium max-w-3xl mx-auto leading-tight min-h-[3em]">
+            <Typewriter 
+              text="No Sugarcoating. Post anything — your idea, profile, decision — and get raw, unfiltered opinions from real people." 
+              delay={2500} 
+            />
+            <motion.span
+              animate={{ opacity: [0, 1, 0] }}
+              transition={{ duration: 0.8, repeat: Infinity }}
+              className="inline-block w-2 h-8 bg-gold ml-2 align-middle"
+            />
+          </p>
         </motion.div>
 
-        {/* Brutality Level Slider */}
-        <AnimatePresence>
-          {showControls && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="space-y-8 max-w-md mx-auto"
-            >
-              <div className="flex flex-col gap-4">
-                <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.5em]">Set_Brutality_Level</span>
-                <div className="grid grid-cols-3 gap-2">
-                  {brutalityLevels.map((l) => (
-                    <button
-                      key={l.level}
-                      onClick={() => setBrutality(l.level)}
-                      className={`py-3 text-[8px] font-black uppercase tracking-widest border transition-all ${
-                        brutality === l.level ? "bg-white text-black border-white" : "border-white/10 text-white/30 hover:border-white/40"
-                      }`}
-                    >
-                      {l.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.8 }}
+          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+        >
+          <motion.button
+            whileHover={{ scale: 1.05, backgroundColor: "#FFD700" }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => onStart(3)}
+            className="px-12 py-6 bg-gold text-black font-black uppercase tracking-widest text-2xl flex items-center gap-4 brutalist-border hover:shadow-none transition-all"
+          >
+            <span className="w-4 h-4 bg-black rounded-full animate-pulse" />
+            Get Roasted
+          </motion.button>
 
-              <motion.button
-                whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(212, 175, 55, 0.3)" }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => onStart(brutality)}
-                className="w-full py-6 bg-white text-black font-black uppercase tracking-[0.5em] text-xl brutalist-border hover:bg-gold transition-all duration-500"
-              >
-                Begin Interrogation
-              </motion.button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+          <motion.button
+            whileHover={{ scale: 1.05, backgroundColor: "rgba(212,175,55,0.1)" }}
+            whileTap={{ scale: 0.95 }}
+            className="px-12 py-6 border-4 border-gold text-gold font-black uppercase tracking-widest text-2xl brutalist-border"
+          >
+            Explore Opinions
+          </motion.button>
+        </motion.div>
       </div>
 
-      {/* Industrial Grid Background (Simplified) */}
+      {/* Industrial Grid Background */}
       <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#333_1px,transparent_1px),linear-gradient(to_bottom,#333_1px,transparent_1px)] bg-[size:60px_60px]" />
-      </div>
-
-      {/* Decorative Stats */}
-      <div className="fixed bottom-12 right-12 z-30 opacity-20 hidden md:flex flex-col items-end">
-        <div className="flex items-center gap-4 mb-2">
-          <span className="text-[8px] font-mono text-white">SYSTEM_UPTIME: 99.9%</span>
-          <div className="w-12 h-[1px] bg-white/40" />
-        </div>
-        <div className="flex items-center gap-4">
-          <span className="text-[8px] font-mono text-white">FAILED_IDEAS: 1,204,912</span>
-          <div className="w-12 h-[1px] bg-white/40" />
-        </div>
       </div>
     </div>
   );

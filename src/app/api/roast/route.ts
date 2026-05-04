@@ -3,50 +3,37 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { idea, audience, problem, pricing } = body;
+    const { idea, isBrutal } = body;
 
     // Simulate AI thinking delay
     await new Promise((resolve) => setTimeout(resolve, 2500));
 
-    // Mock AI Response with Comprehensive Market Data
+    // Logic based on System Prompt:
+    // If isBrutal = true: "Be extremely direct, critical, and brutally honest. Do not soften negative feedback."
+    // If isBrutal = false: "Be constructive, professional, and balanced in feedback."
+
     const roastData = {
-      truthScore: 18,
-      summary: "A derivative solution for a problem that exists only in your imagination. This is less of a business and more of a charity for your ego.",
-      flaws: [
-        "No defensible moat; you'll be crushed by incumbents in weeks.",
-        "Your pricing model assumes users are irrational and wealthy.",
-        "The problem you're solving is a minor inconvenience at best.",
-        "Total lack of market validation beyond your circle of friends."
+      truthScore: isBrutal ? 12 : 45,
+      brutalRoast: isBrutal 
+        ? "This idea isn't new — you're entering a crowded space without a clear edge. You're solving a problem, but not one people are desperate enough to pay for. Your execution plan is practically non-existent."
+        : "While the concept has potential, the current market is highly saturated with established players. To succeed, you'll need a much stronger differentiation strategy and a clearer path to monetization.",
+      competitorAnalysis: [
+        { name: "Existing Giant", whatTheyDo: "Dominates the general market with massive scale.", whyTheyreStrong: "Infinite budget and deep user trust." },
+        { name: "Niche Player", whatTheyDo: "Specializes in your specific feature set.", whyTheyreStrong: "Fast execution and high community engagement." },
+        { name: "Startup X", whatTheyDo: "Recent VC darling with high growth.", whyTheyreStrong: "Highly aggressive user acquisition strategy." }
       ],
-      marketReality: "The market is currently oversaturated with similar 'AI-first' wrappers. Investors are moving toward infrastructure, not surface-level tools.",
-      risks: [
-        "Platform risk (OpenAI/Google can sherlock you tomorrow).",
-        "Zero customer acquisition strategy beyond 'going viral'.",
-        "Burn rate will exceed revenue within 3 months."
-      ],
-      suggestions: [
-        "Pivoting to a niche B2B industrial application might save you.",
-        "Kill the features that don't solve a core pain point immediately.",
-        "Go talk to 50 strangers and see how many would actually pay."
-      ],
-      // New: Market Specifics
-      marketMetrics: {
-        tam: "$12.4B",
-        hostility: "94%",
-        saturation: "High",
-        competitors: ["OpenAI", "Google", "1,200+ Indie Wrappers"]
+      marketInsight: {
+        targetUsers: "Early stage founders / Indie Hackers",
+        demandLevel: isBrutal ? "Low (High Saturation)" : "Medium (Fragmented)",
+        problemClarity: isBrutal ? "Low (Solution in search of a problem)" : "Moderate (Needs Refinement)"
       },
-      successScenario: {
-        title: "The Unicorn Timeline",
-        outcome: "Against all market logic, you achieve hyper-growth by capturing a cult-like following among niche power users.",
-        keyMilestones: [
-          "Month 3: Viral adoption in the indie-hacker community.",
-          "Month 12: Series A funding at a $50M valuation.",
-          "Year 3: Acquisition by a tech giant for $250M."
-        ],
-        whyItWorked: "You perfectly timed a cultural shift that the incumbents were too slow to recognize.",
-        visionaryQuote: "History is made by those who are too stubborn to accept the 'Brutally Honest' truth."
-      }
+      improvementPlan: {
+        differentiation: "Stop targeting 'everyone'. Focus on a hyper-niche segment like students or creators first.",
+        keyFeature: "Add a 'Validation Score' system that compares ideas against historical market data.",
+        positioning: "Position as a 'Risk Mitigation Tool' rather than a 'Feedback App'.",
+        gtm: "Start with tech communities like Product Hunt or Indie Hackers to build social proof."
+      },
+      monetizationIdeas: ["Tiered Subscription ($9/mo)", "Premium Deep-Dive Reports", "Expert Analysis Upsell"]
     };
 
     return NextResponse.json(roastData);

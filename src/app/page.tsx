@@ -7,6 +7,12 @@ import IdeaForm from "@/components/IdeaForm";
 import LoadingState from "@/components/LoadingState";
 import ResultsDisplay from "@/components/ResultsDisplay";
 import NetworkBackground from "@/components/NetworkBackground";
+import HowItWorks from "@/components/HowItWorks";
+import LiveFeed from "@/components/LiveFeed";
+import TrustSection from "@/components/TrustSection";
+import TriggerChips from "@/components/TriggerChips";
+import Leaderboard from "@/components/Leaderboard";
+import NotificationToast from "@/components/NotificationToast";
 import { cn } from "@/lib/utils";
 
 type AppState = "LANDING" | "FORM" | "LOADING" | "RESULTS";
@@ -15,26 +21,31 @@ export default function Home() {
   const [state, setState] = useState<AppState>("LANDING");
   const [result, setResult] = useState<any>(null);
   const [inputIntensity, setInputIntensity] = useState(0);
+  const [isBrutal, setIsBrutal] = useState(true);
 
-  const [brutality, setBrutality] = useState(3);
-
-  const handleStart = (level: number) => {
-    setBrutality(level);
+  const handleStart = () => {
     setState("FORM");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleSubmit = async (formData: any) => {
+    setIsBrutal(formData.isBrutal);
     setState("LOADING");
     
     try {
+      // We pass the isBrutal flag to the API for tone control
       const response = await fetch("/api/roast", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
       const data = await response.json();
+      
+      // If the API doesn't support the new 5-card structure yet, 
+      // ResultsDisplay will use its fallbacks.
       setResult(data);
       setState("RESULTS");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
       console.error("Failed to roast idea:", error);
       setState("FORM");
@@ -87,6 +98,12 @@ export default function Home() {
               transition={{ duration: 0.5 }}
             >
               <Hero onStart={handleStart} />
+              <TriggerChips onSelect={(cat) => handleStart()} />
+              <HowItWorks />
+              <LiveFeed />
+              <Leaderboard />
+              <TrustSection />
+              <NotificationToast />
             </motion.div>
           )}
 
