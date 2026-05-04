@@ -58,10 +58,39 @@ export default function Leaderboard() {
           ))}
         </div>
 
-        <div className="mt-12 text-center">
-          <p className="text-xs font-black text-white/30 uppercase tracking-[0.5em]">
-            Roast more to climb the ranks
-          </p>
+        {/* Hall of Shame */}
+        <div className="mt-32">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter flex items-center justify-center gap-4">
+              <Skull className="text-red-600 w-8 h-8 md:w-12 md:h-12" />
+              Hall of Shame
+            </h2>
+            <p className="text-white/40 font-mono mt-4 uppercase tracking-[0.2em] text-xs">
+              // MOST_CONTROVERSIAL_CASUALTIES
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { title: "My Startup for Dog NFTs", savage: 98, author: "DelusionalFounder" },
+              { title: "Am I hot or just rich?", savage: 95, author: "TrustFundKid" },
+              { title: "Quit my job for whistling", savage: 92, author: "Whistler101" },
+              { title: "Is this resume good?", savage: 89, author: "JuniorDev" }
+            ].map((post, i) => (
+              <div key={i} className="p-6 bg-red-600/5 border border-red-600/20 hover:border-red-600/50 transition-all flex justify-between items-center group">
+                <div>
+                  <h4 className="text-lg font-black text-white uppercase italic tracking-tight group-hover:text-red-600 transition-colors">
+                    "{post.title}"
+                  </h4>
+                  <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest">By @{post.author}</span>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-black text-red-600 italic leading-none">{post.savage}%</div>
+                  <div className="text-[8px] font-black text-red-600/40 uppercase tracking-widest">SAVAGE</div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

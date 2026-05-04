@@ -77,9 +77,16 @@ export default function LiveFeed() {
               />
 
               <div className="flex justify-between items-center">
-                <span className="px-3 py-1 bg-white/5 text-[8px] font-black text-white uppercase tracking-widest border border-white/10">
-                  {post.category}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="px-3 py-1 bg-white/5 text-[8px] font-black text-white uppercase tracking-widest border border-white/10">
+                    {post.category}
+                  </span>
+                  {post.category === "Looks" && (
+                    <span className="text-[8px] font-black text-red-600 uppercase tracking-widest animate-pulse flex items-center gap-1">
+                      <AlertTriangle className="w-2 h-2" /> DANGER_ZONE
+                    </span>
+                  )}
+                </div>
                 <div className="flex items-center gap-1 text-red-600">
                   <Skull className="w-3 h-3" />
                   <span className="text-[10px] font-black uppercase tracking-tighter">{post.savageLevel}% SAVAGE</span>
@@ -90,12 +97,15 @@ export default function LiveFeed() {
                 "{post.content}"
               </h4>
 
-              {/* Top Reply Hook */}
-              <div className="p-4 bg-red-600/5 border-l-4 border-red-600">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-[8px] font-black text-red-600 uppercase tracking-widest">TOP_REPLY</span>
+              {/* Best Roast Highlight */}
+              <div className="p-4 bg-red-600/10 border-l-4 border-red-600 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-1 bg-red-600 text-[6px] font-black text-white uppercase tracking-widest">
+                  BEST_ROAST
                 </div>
-                <p className="text-sm font-bold text-white/80 italic leading-snug">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-[8px] font-black text-red-600 uppercase tracking-widest">@TheExecutioner</span>
+                </div>
+                <p className="text-sm font-bold text-white italic leading-snug">
                   "{post.topReply}"
                 </p>
               </div>
@@ -103,38 +113,34 @@ export default function LiveFeed() {
               <div className="mt-auto pt-6 border-t border-white/5 flex flex-col gap-4">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-1">
-                      <ArrowBigUp className="w-5 h-5 text-white/40 hover:text-green-500 cursor-pointer transition-colors" />
-                      <span className="text-xs font-black text-white">{post.votes}</span>
-                      <ArrowBigDown className="w-5 h-5 text-white/40 hover:text-red-600 cursor-pointer transition-colors" />
-                    </div>
-                    <div className="flex items-center gap-1 text-white/40">
-                      <MessageCircle className="w-4 h-4" />
-                      <span className="text-xs font-black">{post.comments}</span>
+                    <div className="flex items-center gap-2 bg-white/5 p-2 rounded">
+                      <ArrowBigUp className="w-6 h-6 text-white/40 hover:text-green-500 cursor-pointer transition-colors" />
+                      <span className="text-sm font-black text-white">{post.votes}</span>
+                      <ArrowBigDown className="w-6 h-6 text-white/40 hover:text-red-600 cursor-pointer transition-colors" />
                     </div>
                   </div>
                   <div className="flex flex-col items-end">
-                    <span className="text-[8px] font-mono text-white/40 uppercase tracking-widest">
-                      @{post.author}
-                    </span>
-                    <span className="text-[6px] font-mono text-red-600 uppercase tracking-widest">
-                      Karma: {(Math.random() * 5).toFixed(1)}k
+                    <button className="text-[8px] font-black text-gold uppercase tracking-widest hover:underline flex items-center gap-2">
+                      <Share2 className="w-3 h-3" /> Share Roast
+                    </button>
+                    <span className="text-[6px] font-mono text-white/20 uppercase tracking-widest mt-1">
+                      // ID_{post.id}_V{post.votes}
                     </span>
                   </div>
                 </div>
 
-                <div className="flex gap-2">
-                  <button className="flex-1 py-3 bg-zinc-900 border border-white/5 hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2 group/btn">
+                <div className="grid grid-cols-3 gap-2">
+                  <button className="py-3 bg-zinc-900 border border-white/5 hover:bg-zinc-800 transition-colors flex flex-col items-center justify-center group/btn">
                     <Flame className="w-4 h-4 text-orange-500 group-hover/btn:scale-125 transition-transform" />
-                    <span className="text-[10px] font-black text-white/60">{post.reactions.flame}</span>
+                    <span className="text-[8px] font-black text-white/40 mt-1 uppercase">Heat</span>
                   </button>
-                  <button className="flex-1 py-3 bg-zinc-900 border border-white/5 hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2 group/btn">
+                  <button className="py-3 bg-zinc-900 border border-white/5 hover:bg-zinc-800 transition-colors flex flex-col items-center justify-center group/btn">
                     <Skull className="w-4 h-4 text-white group-hover/btn:scale-125 transition-transform" />
-                    <span className="text-[10px] font-black text-white/60">{post.reactions.skull}</span>
+                    <span className="text-[8px] font-black text-white/40 mt-1 uppercase">Dead</span>
                   </button>
-                  <button className="flex-1 py-3 bg-zinc-900 border border-white/5 hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2 group/btn">
+                  <button className="py-3 bg-zinc-900 border border-white/5 hover:bg-zinc-800 transition-colors flex flex-col items-center justify-center group/btn">
                     <Laugh className="w-4 h-4 text-yellow-500 group-hover/btn:scale-125 transition-transform" />
-                    <span className="text-[10px] font-black text-white/60">{post.reactions.laugh}</span>
+                    <span className="text-[8px] font-black text-white/40 mt-1 uppercase">Laugh</span>
                   </button>
                 </div>
               </div>

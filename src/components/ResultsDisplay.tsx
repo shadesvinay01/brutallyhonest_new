@@ -84,13 +84,53 @@ export default function ResultsDisplay({ data, onRetry }: ResultsProps) {
   return (
     <div className="w-full max-w-5xl mx-auto space-y-16 pb-40 pt-10 px-4">
       <div className="text-center space-y-4">
-        <span className="text-[10px] font-black text-red-600 uppercase tracking-[0.6em]">Interrogation_Complete</span>
-        <h2 className="text-5xl md:text-8xl font-black text-white uppercase tracking-tighter italic">
-          THE <span className="text-red-600">VERDICT.</span>
-        </h2>
-      </div>
+        {/* Massive Truth Score */}
+        <div className="flex flex-col items-center mb-24 relative">
+          <motion.div
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="relative"
+          >
+            <div className="text-[120px] md:text-[200px] font-black leading-none text-white italic tracking-tighter opacity-10 blur-sm absolute -inset-10">
+              {displayData.truthScore}%
+            </div>
+            <div className="text-[100px] md:text-[180px] font-black leading-none text-white italic tracking-tighter relative z-10">
+              {displayData.truthScore}%
+            </div>
+          </motion.div>
+          <div className="bg-red-600 px-6 py-2 text-white font-black uppercase tracking-[0.5em] text-xs -mt-4 relative z-20">
+            Truth Score
+          </div>
+          
+          <div className="mt-12 flex gap-12 text-[10px] font-black uppercase tracking-widest text-white/40">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse" />
+              AI Assessment: {displayData.truthScore}%
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-white/20 rounded-full" />
+              Community Prediction: --
+            </div>
+          </div>
+        </div>
 
-      <div className="flex flex-col gap-12">
+        {/* AI vs Humans Battle Header */}
+        <div className="flex justify-between items-center mb-12 border-b-4 border-white/10 pb-6">
+          <div className="flex items-center gap-4">
+            <h2 className="text-4xl font-black text-white uppercase italic tracking-tighter">
+              The <span className="text-red-600">Battlefield</span>
+            </h2>
+          </div>
+          <div className="flex gap-2">
+            <button className="px-4 py-2 bg-white text-black font-black text-[10px] uppercase tracking-widest">
+              AI Insight
+            </button>
+            <button className="px-4 py-2 bg-white/5 text-white/40 font-black text-[10px] uppercase tracking-widest hover:text-white transition-all">
+              Human Roast
+            </button>
+          </div>
+        </div>
+
         {cards.map((card, index) => (
           <motion.div
             key={card.id}
@@ -178,6 +218,41 @@ export default function ResultsDisplay({ data, onRetry }: ResultsProps) {
             </div>
           </motion.div>
         ))}
+
+        {/* Human Roast Section (The Battle) */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          className="mt-20 space-y-12"
+        >
+          <div className="flex items-center gap-4">
+            <h3 className="text-2xl font-black text-white uppercase italic tracking-widest">
+              Community <span className="text-red-600">Crossfire</span>
+            </h3>
+            <div className="flex-1 h-px bg-white/10" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="p-8 bg-white/5 border border-white/10 space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">@TheExecutioner</span>
+                <span className="text-[10px] font-black text-red-600 uppercase tracking-widest">🔥 1.2k Heat</span>
+              </div>
+              <p className="text-xl font-bold text-white uppercase italic leading-tight">
+                "You're not 'following your passion', you're having a mid-life crisis on a budget. This is the Pets.com of 2026."
+              </p>
+            </div>
+            <div className="p-8 bg-white/5 border border-white/10 space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">@RealityBites</span>
+                <span className="text-[10px] font-black text-red-600 uppercase tracking-widest">💀 840 Savage</span>
+              </div>
+              <p className="text-xl font-bold text-white uppercase italic leading-tight">
+                "Wait, so your plan is to burn investor cash until customers magically appear? Revolutionary. Never seen that fail before."
+              </p>
+            </div>
+          </div>
+        </motion.div>
       </div>
 
       <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
