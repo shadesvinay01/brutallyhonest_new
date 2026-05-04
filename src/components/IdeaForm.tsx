@@ -97,9 +97,33 @@ export default function IdeaForm({ onSubmit }: IdeaFormProps) {
             autoFocus
             value={idea}
             onChange={(e) => setIdea(e.target.value)}
-            placeholder={`Submit your ${category} for a reality check...`}
+            placeholder={
+              category === "resume" 
+                ? "Paste your resume text here or upload the file..." 
+                : `Submit your ${category} for a reality check...`
+            }
             className="w-full bg-transparent p-0 text-3xl md:text-6xl font-black text-white placeholder:text-white/5 focus:outline-none transition-all resize-none min-h-[250px] leading-tight uppercase italic scrollbar-hide"
           />
+          
+          {category === "resume" && (
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="absolute bottom-0 right-0"
+            >
+              <label className="flex items-center gap-4 px-8 py-4 bg-white/5 border-2 border-dashed border-gold/30 hover:border-gold hover:bg-gold/5 cursor-pointer transition-all group">
+                <input type="file" className="hidden" accept=".pdf,.doc,.docx" />
+                <div className="flex flex-col items-end">
+                  <span className="text-[10px] font-black text-gold uppercase tracking-widest">Secure_Doc_Drop</span>
+                  <span className="text-[8px] font-mono text-white/20 uppercase">PDF / DOC / TXT</span>
+                </div>
+                <div className="w-10 h-10 bg-gold/10 flex items-center justify-center group-hover:bg-gold transition-all">
+                  <ArrowRight className="w-5 h-5 text-gold group-hover:text-black" />
+                </div>
+              </label>
+            </motion.div>
+          )}
+
           {category === "looks" && (
             <div className="absolute top-0 right-0 bg-red-600/20 text-red-600 px-4 py-2 text-[8px] font-black uppercase tracking-widest animate-pulse border border-red-600/30">
               ⚠️ Warning: Emotional damage incoming

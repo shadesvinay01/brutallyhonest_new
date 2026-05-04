@@ -12,6 +12,7 @@ import LiveFeed from "@/components/LiveFeed";
 import TrustSection from "@/components/TrustSection";
 import TriggerChips from "@/components/TriggerChips";
 import Leaderboard from "@/components/Leaderboard";
+import Newsletter from "@/components/Newsletter";
 import NotificationToast from "@/components/NotificationToast";
 import { cn } from "@/lib/utils";
 
@@ -104,6 +105,7 @@ export default function Home() {
               <HowItWorks />
               <LiveFeed />
               <Leaderboard />
+              <Newsletter />
               <TrustSection />
               <NotificationToast />
             </motion.div>
