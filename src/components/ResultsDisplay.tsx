@@ -43,35 +43,27 @@ export default function ResultsDisplay({ data, onRetry }: ResultsProps) {
     }
   };
 
-  const cards = [
+  const cards: any[] = [
     {
       id: "roast",
       icon: <Skull className="w-8 h-8 text-red-600" />,
       title: "💀 Brutal Truth",
       type: "roast",
-      content: displayData.brutalRoast || "This idea isn't new — you're entering a crowded space without a clear edge. You're solving a problem, but not one people are desperate enough to pay for."
+      content: displayData.brutalRoast || "This idea isn't new — you're entering a crowded space without a clear edge."
     },
     {
       id: "competitors",
       icon: <BarChart3 className="w-8 h-8 text-blue-600" />,
       title: "🔍 Competitors",
       type: "list",
-      items: displayData.competitorAnalysis || [
-        { name: "Existing Giant", whatTheyDo: "Dominates the general market.", whyTheyreStrong: "Infinite budget and user trust." },
-        { name: "Niche Player", whatTheyDo: "Specializes in your specific feature.", whyTheyreStrong: "Fast execution and community focus." },
-        { name: "Emerging Startup", whatTheyDo: "Recent VC darling with high growth.", whyTheyreStrong: "Highly aggressive acquisition strategy." }
-      ]
+      items: displayData.competitorAnalysis || []
     },
     {
       id: "market",
       icon: <Target className="w-8 h-8 text-green-600" />,
       title: "📊 Market",
       type: "grid",
-      data: displayData.marketInsight || {
-        targetUsers: "Early stage founders",
-        demandLevel: "Extremely High (Saturation)",
-        problemClarity: "Low (Solution searching for a problem)"
-      }
+      data: displayData.marketInsight || {}
     },
     {
       id: "improve",
