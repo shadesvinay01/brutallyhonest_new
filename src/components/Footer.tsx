@@ -65,6 +65,7 @@ export default function Footer() {
                 className="text-white/20 transition-colors"
                 aria-label="GitHub"
                 target="_blank"
+                rel="noopener noreferrer"
               >
                 <GitBranch className="w-5 h-5" />
               </motion.a>
@@ -85,6 +86,7 @@ export default function Footer() {
                       href={link.href}
                       className="text-white/40 text-xs font-black uppercase tracking-widest flex items-center gap-2 group transition-colors"
                       target={link.href.startsWith("http") ? "_blank" : undefined}
+                      rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
                     >
                       {link.icon && <span className="opacity-0 group-hover:opacity-100 transition-opacity">{link.icon}</span>}
                       {link.label}
