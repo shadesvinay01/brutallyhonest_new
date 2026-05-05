@@ -26,16 +26,27 @@ export default function Footer() {
     {
       title: "Connect",
       links: [
-        { label: "Social Media", href: "https://twitter.com", icon: <Share2 className="w-3 h-3" /> },
-        { label: "GitHub", href: "https://github.com/shadesvinay01/brutallyhonest_new", icon: <GitBranch className="w-3 h-3" /> },
-        { label: "Contact", href: "mailto:support@brutallyhonest.xyz", icon: <Mail className="w-3 h-3" /> },
+        { 
+          label: "X / Twitter", 
+          href: "https://twitter.com", 
+          icon: <Share2 className="w-3 h-3" /> 
+        },
+        { 
+          label: "GitHub", 
+          href: "https://github.com/shadesvinay01/brutallyhonest_new", 
+          icon: <GitBranch className="w-3 h-3" /> 
+        },
+        { 
+          label: "Contact", 
+          href: "mailto:support@brutallyhonest.xyz", 
+          icon: <Mail className="w-3 h-3" /> 
+        },
       ],
     },
   ];
 
   return (
     <footer className="bg-black border-t-4 border-white/10 pt-20 pb-10 relative overflow-hidden">
-      {/* Background Accent */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
       
       <div className="max-w-7xl mx-auto px-4">
@@ -79,20 +90,27 @@ export default function Footer() {
                 {section.title}
               </h3>
               <ul className="space-y-4">
-                {section.links.map((link) => (
-                  <li key={link.label}>
-                    <motion.a
-                      whileHover={{ x: 4, color: "#FFF" }}
-                      href={link.href}
-                      className="text-white/40 text-xs font-black uppercase tracking-widest flex items-center gap-2 group transition-colors"
-                      target={link.href.startsWith("http") ? "_blank" : undefined}
-                      rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                    >
-                      {link.icon && <span className="opacity-0 group-hover:opacity-100 transition-opacity">{link.icon}</span>}
-                      {link.label}
-                    </motion.a>
-                  </li>
-                ))}
+                {section.links.map((link) => {
+                  const isExternal = link.href.startsWith("http") || link.href.startsWith("mailto:");
+                  return (
+                    <li key={link.label}>
+                      <motion.a
+                        whileHover={{ x: 4, color: "#FFF" }}
+                        href={link.href}
+                        className="text-white/40 text-xs font-black uppercase tracking-widest flex items-center gap-2 group transition-colors"
+                        target={isExternal ? "_blank" : undefined}
+                        rel={isExternal ? "noopener noreferrer" : undefined}
+                      >
+                        {link.icon && (
+                          <span className="opacity-0 group-hover:opacity-100 transition-opacity">
+                            {link.icon}
+                          </span>
+                        )}
+                        {link.label}
+                      </motion.a>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))}
