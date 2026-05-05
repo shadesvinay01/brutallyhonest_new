@@ -101,11 +101,7 @@ export default function Footer() {
                         target={isExternal ? "_blank" : undefined}
                         rel={isExternal ? "noopener noreferrer" : undefined}
                       >
-                        {link.icon && (
-                          <span className="opacity-0 group-hover:opacity-100 transition-opacity">
-                            {link.icon}
-                          </span>
-                        )}
+                        {link.icon && <span className="opacity-0 group-hover:opacity-100 transition-opacity">{link.icon}</span>}
                         {link.label}
                       </motion.a>
                     </li>
