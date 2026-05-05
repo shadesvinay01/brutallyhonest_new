@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, ShieldAlert, Zap, Skull, TrendingDown } from "lucide-react";
 
 interface HeroProps {
-  onStart: any;
+  onStart: (category: string) => void;
 }
 
 const Typewriter = ({ text, delay = 0, onComplete }: { text: string; delay?: number; onComplete?: () => void }) => {
@@ -119,7 +119,7 @@ export default function Hero({ onStart }: HeroProps) {
           <motion.button
             whileHover={{ scale: 1.05, backgroundColor: "#FFD700" }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => onStart()}
+            onClick={() => onStart("startup")}
             className="w-full sm:w-auto px-8 md:px-12 py-4 md:py-6 bg-gold text-black font-black uppercase tracking-widest text-xl md:text-2xl flex items-center justify-center gap-4 brutalist-border hover:shadow-none transition-all"
           >
             <span className="w-3 h-3 md:w-4 md:h-4 bg-black rounded-full animate-pulse" />

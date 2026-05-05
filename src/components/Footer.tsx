@@ -6,7 +6,18 @@ import { Shield, Lock, FileText, GitBranch, Globe, Mail, Share2 } from "lucide-r
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
-  const sections = [
+  interface FooterLink {
+    label: string;
+    href: string;
+    icon?: React.ReactNode;
+  }
+
+  interface FooterSection {
+    title: string;
+    links: FooterLink[];
+  }
+
+  const sections: FooterSection[] = [
     {
       title: "Legal",
       links: [

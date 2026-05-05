@@ -28,7 +28,7 @@ export default function Home() {
 
   const [selectedCategory, setSelectedCategory] = useState("startup");
 
-  const handleStart: any = (category: string = "startup") => {
+  const handleStart = (category: string = "startup") => {
     setSelectedCategory(category);
     setState("FORM");
     window.scrollTo({ top: 0, behavior: "smooth" });
