@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, ShieldAlert, Zap, Skull, TrendingDown } from "lucide-react";
 
 interface HeroProps {
-  onStart: () => void;
+  onStart: any;
 }
 
 const Typewriter = ({ text, delay = 0, onComplete }: { text: string; delay?: number; onComplete?: () => void }) => {
