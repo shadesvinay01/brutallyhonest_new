@@ -6,18 +6,18 @@ import { Edit3, MessageSquare, RefreshCcw } from "lucide-react";
 const steps = [
   {
     icon: <Edit3 className="w-12 h-12 text-red-600" />,
-    title: "Post your question",
-    description: "Submit your startup idea, career move, or personal choice for a brutal breakdown."
+    title: "1. DROP THE TRUTH",
+    description: "Submit your idea. Our AI instantly scans for logical fallacies, market vulnerabilities, and structural weaknesses in your plan."
   },
   {
     icon: <MessageSquare className="w-12 h-12 text-red-600" />,
-    title: "Get brutally honest replies",
-    description: "Our AI and community won't hold back. You'll get the raw truth, no matter how much it hurts."
+    title: "2. GET DISSECTED",
+    description: "The engine generates a high-precision roast, translating identified gaps into brutal but actionable feedback. No fluff, just data-driven dissection."
   },
   {
     icon: <RefreshCcw className="w-12 h-12 text-red-600" />,
-    title: "React, improve, repeat",
-    description: "Use the feedback to pivot, refine, and eventually build something that doesn't suck."
+    title: "3. EVOLVE OR DIE",
+    description: "Review the autopsy, pivot your strategy based on the 'Improvement Plan', and come back when you actually have something worth showing."
   }
 ];
 

@@ -146,9 +146,18 @@ export default function LiveFeed() {
 
                 <div className="flex gap-4 items-center">
                   <div className="flex flex-col items-end">
-                    <button className="px-6 py-3 bg-gold text-black font-black uppercase text-[10px] tracking-widest hover:bg-white transition-all flex items-center gap-2">
-                      <Share2 className="w-4 h-4" /> Share Roast
-                    </button>
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={() => alert("Reported to Interrogation Systems.")}
+                        className="p-3 bg-white/5 border border-white/10 text-white/20 hover:text-red-600 hover:bg-red-600/10 transition-all group"
+                        title="Flag Content"
+                      >
+                        <AlertTriangle className="w-4 h-4" />
+                      </button>
+                      <button className="px-6 py-3 bg-gold text-black font-black uppercase text-[10px] tracking-widest hover:bg-white transition-all flex items-center gap-2">
+                        <Share2 className="w-4 h-4" /> Share Roast
+                      </button>
+                    </div>
                   </div>
                   <div className="flex flex-col items-center">
                     <Skull className="w-5 h-5 text-red-600 mb-1" />

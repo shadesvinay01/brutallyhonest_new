@@ -23,11 +23,9 @@ export default function IdeaForm({ onSubmit, onInputChange, initialCategory = "s
   const [isBrutal, setIsBrutal] = useState(true);
   const [isAnonymous, setIsAnonymous] = useState(true);
   const [harshness, setHarshness] = useState(80);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = () => {
-    if (idea.trim().length < 5) return;
-    onSubmit({ idea, category, isBrutal, isAnonymous, harshness });
-  };
+  const badWords = ["abuse", "slur", "illegal", "doxx"];
 
   const handleHarshnessChange = (val: number) => {
     setHarshness(val);
@@ -36,13 +34,31 @@ export default function IdeaForm({ onSubmit, onInputChange, initialCategory = "s
     }
   };
 
-  const getPlaceholder = () => {
-    switch (category) {
-      case "resume": return "Paste your CV content here... I'll tell you why you're unemployed.";
-      case "looks": return "Describe your style or paste a link... Prepare for ego death.";
-      case "ideas": return "Explain your 'revolutionary' idea... I'll find the 100 ways it fails.";
-      default: return "Describe your startup... I've seen a thousand 'Uber for X' fail, yours is next.";
+  const validateAndSubmit = () => {
+    setError(null);
+    if (!idea || idea.length < 10) {
+      setError("Your idea is too short for a meaningful interrogation.");
+      return;
     }
+    if (idea.length > 500) {
+      setError("Keep it under 500 characters. Brevity is the soul of wit (and roasts).");
+      return;
+    }
+    
+    const containsBadWord = badWords.some(word => idea.toLowerCase().includes(word));
+    if (containsBadWord) {
+      setError("Content flagged. Keep it brutal but within community guidelines.");
+      return;
+    }
+
+    onSubmit({ idea, category, isBrutal, isAnonymous, harshness });
+  };
+
+  const placeholders = {
+    resume: "Paste your CV content here... I'll tell you why you're unemployed.",
+    looks: "Describe your style or paste a link... Prepare for ego death.",
+    ideas: "Explain your 'revolutionary' idea... I'll find the 100 ways it fails.",
+    startup: "Describe your startup... I've seen a thousand 'Uber for X' fail, yours is next."
   };
 
   const getThemeColor = () => {
@@ -78,6 +94,7 @@ export default function IdeaForm({ onSubmit, onInputChange, initialCategory = "s
                       ? "bg-gold text-black border-gold shadow-[5px_5px_0px_0px_rgba(212,175,55,0.3)]" 
                       : "text-white/40 border-white/10 hover:border-gold/50"
                   }`}
+                  aria-label={`Select category ${cat.label}`}
                 >
                   {cat.icon} {cat.label}
                   {cat.danger && <AlertTriangle className="w-3 h-3 text-red-500" />}
@@ -88,12 +105,13 @@ export default function IdeaForm({ onSubmit, onInputChange, initialCategory = "s
 
           <div className="flex flex-col sm:flex-row lg:flex-col gap-4 w-full lg:w-auto">
             <div className="flex items-center justify-between gap-8 bg-white/5 p-3 md:p-4 border border-white/10 flex-1 sm:flex-initial">
-              <span className="text-[8px] font-black text-white/40 uppercase tracking-widest">
+              <span className="text-[8px] font-black text-white/70 uppercase tracking-widest">
                 Identity:
               </span>
               <button
                 onClick={() => setIsAnonymous(!isAnonymous)}
                 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white hover:text-gold transition-colors"
+                aria-label={`Toggle anonymity. Currently ${isAnonymous ? "anonymous" : "public"}`}
               >
                 {isAnonymous ? <EyeOff className="w-4 h-4 text-red-500" /> : <UserCheck className="w-4 h-4 text-green-500" />}
                 {isAnonymous ? "Anonymous" : "Public"}
@@ -101,7 +119,7 @@ export default function IdeaForm({ onSubmit, onInputChange, initialCategory = "s
             </div>
 
             <div className="flex items-center gap-4 bg-white/5 p-3 md:p-4 border border-white/10 flex-1 sm:flex-initial">
-              <span className="text-[8px] font-black text-white/40 uppercase tracking-widest min-w-max">
+              <span className="text-[8px] font-black text-white/70 uppercase tracking-widest min-w-max">
                 Intensity:
               </span>
               <input 
@@ -112,6 +130,7 @@ export default function IdeaForm({ onSubmit, onInputChange, initialCategory = "s
                 value={harshness} 
                 onChange={(e) => handleHarshnessChange(parseInt(e.target.value))}
                 className="accent-gold flex-1 md:w-64 h-2 bg-white/10 appearance-none cursor-pointer rounded-full"
+                aria-label="Adjust analysis intensity"
               />
               <span className="text-[10px] font-mono text-gold min-w-[3ch]">{harshness}%</span>
             </div>
@@ -120,13 +139,35 @@ export default function IdeaForm({ onSubmit, onInputChange, initialCategory = "s
 
         {/* The Text Input */}
         <div className="relative group">
-          <textarea
-            autoFocus
-            value={idea}
-            onChange={(e) => setIdea(e.target.value)}
-            placeholder={getPlaceholder()}
-            className="w-full bg-transparent p-0 text-3xl md:text-6xl font-black text-white placeholder:text-white/5 focus:outline-none transition-all resize-none min-h-[200px] md:min-h-[250px] leading-tight uppercase italic scrollbar-hide"
-          />
+          <div className="space-y-4">
+            <div className="flex justify-between items-end">
+              <label htmlFor="idea-input" className="text-xs font-black text-white/70 uppercase tracking-widest">
+                The Subject
+              </label>
+              <span className={`text-[10px] font-mono ${idea.length > 450 ? "text-red-600" : "text-white/20"}`}>
+                {idea.length}/500
+              </span>
+            </div>
+            <textarea
+              id="idea-input"
+              value={idea}
+              onChange={(e) => setIdea(e.target.value)}
+              placeholder={placeholders[category as keyof typeof placeholders]}
+              className="w-full bg-white/5 border-4 border-white/10 p-6 md:p-10 text-white text-xl md:text-3xl font-black placeholder:text-white/10 focus:border-gold outline-none transition-all min-h-[200px] md:min-h-[300px] resize-none"
+              aria-label="Input your idea here"
+              maxLength={500}
+            />
+            {error && (
+              <motion.div 
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="p-4 bg-red-600/20 border-l-4 border-red-600 text-red-600 text-xs font-black uppercase tracking-widest"
+                role="alert"
+              >
+                ⚠️ ERROR: {error}
+              </motion.div>
+            )}
+          </div>
           
           {category === "resume" && (
             <motion.div 
@@ -152,10 +193,6 @@ export default function IdeaForm({ onSubmit, onInputChange, initialCategory = "s
               ⚠️ Warning: Emotional damage incoming
             </div>
           )}
-          <div className={cn(
-            "absolute -bottom-4 left-0 w-full h-[1px] bg-white/10 group-focus-within:bg-gold transition-all shadow-[0_0_20px_rgba(212,175,55,0)] group-focus-within:shadow-[0_0_20px_rgba(212,175,55,0.5)]",
-            category !== 'startup' && `group-focus-within:bg-current ${getThemeColor().replace('border', 'text')}`
-          )} />
         </div>
 
         {/* Submit Section */}
@@ -163,11 +200,9 @@ export default function IdeaForm({ onSubmit, onInputChange, initialCategory = "s
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={handleSubmit}
-            disabled={idea.trim().length < 5}
-            className={`w-full md:w-auto px-10 md:px-20 py-6 md:py-10 bg-gold text-black font-black uppercase tracking-[0.2em] md:tracking-[0.5em] text-xl md:text-3xl flex items-center justify-center gap-4 md:gap-8 brutalist-border-gold transition-all ${
-              idea.trim().length < 5 ? "opacity-20 cursor-not-allowed grayscale" : "hover:translate-x-1 hover:-translate-y-1 hover:shadow-[20px_20px_0px_0px_rgba(212,175,55,0.2)]"
-            }`}
+            onClick={validateAndSubmit}
+            aria-label="Submit for Interrogation"
+            className="w-full md:w-auto px-10 md:px-20 py-6 md:py-10 bg-gold text-black font-black uppercase tracking-[0.2em] md:tracking-[0.5em] text-xl md:text-3xl flex items-center justify-center gap-4 md:gap-8 brutalist-border-gold transition-all hover:translate-x-1 hover:-translate-y-1 hover:shadow-[20px_20px_0px_0px_rgba(212,175,55,0.2)]"
           >
             <Skull className="w-6 h-6 md:w-10 md:h-10" />
             <span className="truncate">Analyze My {category}</span>

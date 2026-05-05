@@ -12,8 +12,10 @@ import LiveFeed from "@/components/LiveFeed";
 import TrustSection from "@/components/TrustSection";
 import TriggerChips from "@/components/TriggerChips";
 import Leaderboard from "@/components/Leaderboard";
+import Footer from "@/components/Footer";
 import Newsletter from "@/components/Newsletter";
 import NotificationToast from "@/components/NotificationToast";
+import Onboarding from "@/components/Onboarding";
 import { cn } from "@/lib/utils";
 
 type AppState = "LANDING" | "FORM" | "LOADING" | "RESULTS";
@@ -109,8 +111,10 @@ export default function Home() {
               <LiveFeed />
               <Leaderboard />
               <Newsletter />
+              <Footer />
               <TrustSection />
               <NotificationToast />
+              <Onboarding />
             </motion.div>
           )}
 

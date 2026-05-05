@@ -37,7 +37,10 @@ const failures = [
   { name: "THERANOS", reason: "Selling science fiction as medical fact." },
   { name: "JUICERO", reason: "A $400 machine to squeeze a bag of juice." },
   { name: "PETS.COM", reason: "Spending $300M to sell dog food at a loss." },
-  { name: "FAST", reason: "A one-click checkout with zero-click growth." }
+  { name: "FAST", reason: "A one-click checkout with zero-click growth." },
+  { name: "WEWORK", reason: "Valuing office space like a tech unicorn." },
+  { name: "FTX", reason: "Building a crypto empire on a house of cards." },
+  { name: "JAWBONE", reason: "Pioneering wearables, perfecting liquidation." }
 ];
 
 const intelligenceStream = [
@@ -66,7 +69,7 @@ export default function Hero({ onStart }: HeroProps) {
           transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
           className="flex gap-20 items-center"
         >
-          {[...failures, ...failures].map((f, i) => (
+          {failures.map((f, i) => (
             <a 
               key={i} 
               href={`https://www.google.com/search?q=${f.name}+startup+failure+analysis`}
