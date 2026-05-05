@@ -108,9 +108,10 @@ export default function IdeaForm({ onSubmit, onInputChange, initialCategory = "s
                 type="range" 
                 min="0" 
                 max="100" 
+                step="1"
                 value={harshness} 
                 onChange={(e) => handleHarshnessChange(parseInt(e.target.value))}
-                className="accent-gold flex-1 md:w-32 h-1 bg-white/10 appearance-none cursor-pointer"
+                className="accent-gold flex-1 md:w-64 h-2 bg-white/10 appearance-none cursor-pointer rounded-full"
               />
               <span className="text-[10px] font-mono text-gold min-w-[3ch]">{harshness}%</span>
             </div>

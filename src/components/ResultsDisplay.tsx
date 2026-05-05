@@ -44,10 +44,23 @@ export default function ResultsDisplay({ data, onRetry }: ResultsProps) {
     }
   };
 
-  const handleShare = () => {
-    const text = `I just got roasted by brutallyhonest.xyz! My truth score is ${displayData.truthScore}%. 💀\n\n"${displayData.brutalRoast.slice(0, 100)}..."\n\nGet roasted here:`;
+  const handleShare = async () => {
+    const text = `I just got roasted by brutallyhonest.xyz! My truth score is ${displayData.truthScore}%. 💀\n\n"${displayData.brutalRoast.slice(0, 100)}..."`;
     const url = "https://brutallyhonest.xyz";
-    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, "_blank");
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Brutally Honest Analysis',
+          text: text,
+          url: url,
+        });
+      } catch (err) {
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, "_blank");
+      }
+    } else {
+      window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, "_blank");
+    }
   };
 
   const cards: any[] = [
@@ -105,10 +118,10 @@ export default function ResultsDisplay({ data, onRetry }: ResultsProps) {
             animate={{ scale: 1, opacity: 1 }}
             className="relative"
           >
-            <div className="text-[80px] md:text-[200px] font-black leading-none text-white italic tracking-tighter opacity-10 blur-sm absolute -inset-6 md:-inset-10">
+            <div className="text-[clamp(5rem,20vw,12rem)] font-black leading-none text-white italic tracking-tighter opacity-10 blur-sm absolute -inset-6 md:-inset-10">
               {displayData.truthScore}%
             </div>
-            <div className="text-[70px] md:text-[180px] font-black leading-none text-white italic tracking-tighter relative z-10">
+            <div className="text-[clamp(4.5rem,18vw,11rem)] font-black leading-none text-white italic tracking-tighter relative z-10">
               {displayData.truthScore}%
             </div>
           </motion.div>

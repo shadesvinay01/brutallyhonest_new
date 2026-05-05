@@ -88,13 +88,13 @@ export default function Hero({ onStart }: HeroProps) {
           transition={{ duration: 0.8 }}
           className="space-y-6"
         >
-          <h1 className="text-4xl sm:text-7xl md:text-9xl font-black tracking-tighter text-white leading-[0.8] uppercase min-h-[2.4em] md:min-h-[1.6em]">
+          <h1 className="text-[clamp(2.5rem,10vw,8rem)] font-black tracking-tighter text-white leading-[0.8] uppercase min-h-[2.4em] md:min-h-[1.6em]">
             <Typewriter text="Get Brutally Honest" delay={500} /> <br />
             <span className="text-gold">
               <Typewriter text="Feedback." delay={1500} />
             </span>
           </h1>
-          <p className="text-lg md:text-3xl text-white/60 font-medium max-w-3xl mx-auto leading-tight min-h-[4em] md:min-h-[3em] px-4">
+          <p className="text-[clamp(1rem,3vw,1.8rem)] text-white/60 font-medium max-w-3xl mx-auto leading-tight min-h-[4em] md:min-h-[3em] px-4">
             <Typewriter 
               text="No Sugarcoating. Post anything — your idea, profile, decision — and get raw, unfiltered opinions from real people." 
               delay={2500} 
@@ -102,7 +102,7 @@ export default function Hero({ onStart }: HeroProps) {
             <motion.span
               animate={{ opacity: [0, 1, 0] }}
               transition={{ duration: 0.8, repeat: Infinity }}
-              className="inline-block w-2 h-6 md:h-8 bg-gold ml-2 align-middle"
+              className="inline-block w-2 h-[0.8em] bg-gold ml-2 align-middle"
             />
           </p>
         </motion.div>
