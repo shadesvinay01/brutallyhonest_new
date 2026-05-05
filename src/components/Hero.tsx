@@ -50,6 +50,13 @@ const intelligenceStream = [
 export default function Hero({ onStart }: HeroProps) {
   const [brutality, setBrutality] = useState(3);
 
+  const scrollToFeed = () => {
+    const feed = document.getElementById("live-feed");
+    if (feed) {
+      feed.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div className="relative min-h-[90vh] flex flex-col items-center justify-center px-4 overflow-hidden pt-20">
       {/* Wall of Truth Ticker */}
@@ -60,10 +67,16 @@ export default function Hero({ onStart }: HeroProps) {
           className="flex gap-20 items-center"
         >
           {[...failures, ...failures].map((f, i) => (
-            <div key={i} className="flex gap-4 items-center">
+            <a 
+              key={i} 
+              href={`https://www.google.com/search?q=${f.name}+startup+failure+analysis`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex gap-4 items-center hover:bg-red-600/20 px-4 py-1 transition-colors group cursor-pointer"
+            >
               <span className="text-red-600 font-black text-[10px]">// {f.name}_AUTOPSY</span>
-              <span className="text-white/40 text-[10px] font-mono uppercase">{f.reason}</span>
-            </div>
+              <span className="text-white/40 text-[10px] font-mono uppercase group-hover:text-white transition-colors">{f.reason}</span>
+            </a>
           ))}
         </motion.div>
       </div>
@@ -75,13 +88,13 @@ export default function Hero({ onStart }: HeroProps) {
           transition={{ duration: 0.8 }}
           className="space-y-6"
         >
-          <h1 className="text-5xl sm:text-7xl md:text-9xl font-black tracking-tighter text-white leading-[0.8] uppercase min-h-[2.4em] md:min-h-[1.6em]">
+          <h1 className="text-4xl sm:text-7xl md:text-9xl font-black tracking-tighter text-white leading-[0.8] uppercase min-h-[2.4em] md:min-h-[1.6em]">
             <Typewriter text="Get Brutally Honest" delay={500} /> <br />
             <span className="text-gold">
               <Typewriter text="Feedback." delay={1500} />
             </span>
           </h1>
-          <p className="text-xl md:text-3xl text-white/60 font-medium max-w-3xl mx-auto leading-tight min-h-[3em]">
+          <p className="text-lg md:text-3xl text-white/60 font-medium max-w-3xl mx-auto leading-tight min-h-[4em] md:min-h-[3em] px-4">
             <Typewriter 
               text="No Sugarcoating. Post anything — your idea, profile, decision — and get raw, unfiltered opinions from real people." 
               delay={2500} 
@@ -89,7 +102,7 @@ export default function Hero({ onStart }: HeroProps) {
             <motion.span
               animate={{ opacity: [0, 1, 0] }}
               transition={{ duration: 0.8, repeat: Infinity }}
-              className="inline-block w-2 h-8 bg-gold ml-2 align-middle"
+              className="inline-block w-2 h-6 md:h-8 bg-gold ml-2 align-middle"
             />
           </p>
         </motion.div>
@@ -98,22 +111,23 @@ export default function Hero({ onStart }: HeroProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.8 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+          className="flex flex-col sm:flex-row gap-4 justify-center items-center px-4"
         >
           <motion.button
             whileHover={{ scale: 1.05, backgroundColor: "#FFD700" }}
             whileTap={{ scale: 0.95 }}
             onClick={() => onStart(3)}
-            className="px-12 py-6 bg-gold text-black font-black uppercase tracking-widest text-2xl flex items-center gap-4 brutalist-border hover:shadow-none transition-all"
+            className="w-full sm:w-auto px-8 md:px-12 py-4 md:py-6 bg-gold text-black font-black uppercase tracking-widest text-xl md:text-2xl flex items-center justify-center gap-4 brutalist-border hover:shadow-none transition-all"
           >
-            <span className="w-4 h-4 bg-black rounded-full animate-pulse" />
+            <span className="w-3 h-3 md:w-4 md:h-4 bg-black rounded-full animate-pulse" />
             Get Roasted
           </motion.button>
 
           <motion.button
             whileHover={{ scale: 1.05, backgroundColor: "rgba(212,175,55,0.1)" }}
             whileTap={{ scale: 0.95 }}
-            className="px-12 py-6 border-4 border-gold text-gold font-black uppercase tracking-widest text-2xl brutalist-border"
+            onClick={scrollToFeed}
+            className="w-full sm:w-auto px-8 md:px-12 py-4 md:py-6 border-4 border-gold text-gold font-black uppercase tracking-widest text-xl md:text-2xl brutalist-border flex items-center justify-center"
           >
             Explore Opinions
           </motion.button>

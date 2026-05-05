@@ -51,7 +51,7 @@ const mockPosts = [
 
 export default function LiveFeed() {
   return (
-    <section className="py-32 bg-black relative border-y border-white/10">
+    <section id="live-feed" className="py-32 bg-black relative border-y border-white/10">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
           <div>

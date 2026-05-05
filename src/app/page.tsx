@@ -24,7 +24,10 @@ export default function Home() {
   const [inputIntensity, setInputIntensity] = useState(0);
   const [isBrutal, setIsBrutal] = useState(true);
 
-  const handleStart = () => {
+  const [selectedCategory, setSelectedCategory] = useState("startup");
+
+  const handleStart = (category: string = "startup") => {
+    setSelectedCategory(category);
     setState("FORM");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -101,7 +104,7 @@ export default function Home() {
               transition={{ duration: 0.5 }}
             >
               <Hero onStart={handleStart} />
-              <TriggerChips onSelect={(cat) => handleStart()} />
+              <TriggerChips onSelect={(cat) => handleStart(cat)} />
               <HowItWorks />
               <LiveFeed />
               <Leaderboard />
@@ -120,7 +123,11 @@ export default function Home() {
               transition={{ duration: 0.3 }}
               className="pt-20"
             >
-              <IdeaForm onSubmit={handleSubmit} onInputChange={setInputIntensity} />
+              <IdeaForm 
+                onSubmit={handleSubmit} 
+                onInputChange={setInputIntensity} 
+                initialCategory={selectedCategory}
+              />
             </motion.div>
           )}
 
