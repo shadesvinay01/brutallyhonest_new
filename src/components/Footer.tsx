@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Shield, Lock, FileText, Github, Twitter, Mail } from "lucide-react";
+import { Shield, Lock, FileText, Github, Globe, Mail, Share2 } from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -26,7 +26,7 @@ export default function Footer() {
     {
       title: "Connect",
       links: [
-        { label: "Twitter / X", href: "https://twitter.com", icon: <Twitter className="w-3 h-3" /> },
+        { label: "Social Media", href: "https://twitter.com", icon: <Share2 className="w-3 h-3" /> },
         { label: "GitHub", href: "https://github.com", icon: <Github className="w-3 h-3" /> },
         { label: "Contact", href: "mailto:support@brutallyhonest.xyz", icon: <Mail className="w-3 h-3" /> },
       ],
@@ -55,9 +55,9 @@ export default function Footer() {
                 whileHover={{ y: -2, color: "#D4AF37" }}
                 href="#" 
                 className="text-white/20 transition-colors"
-                aria-label="Twitter"
+                aria-label="Social"
               >
-                <Twitter className="w-5 h-5" />
+                <Share2 className="w-5 h-5" />
               </motion.a>
               <motion.a 
                 whileHover={{ y: -2, color: "#D4AF37" }}
