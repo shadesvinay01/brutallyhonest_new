@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Shield, Lock, FileText, Github, Globe, Mail, Share2 } from "lucide-react";
+import { Shield, Lock, FileText, GitBranch, Globe, Mail, Share2 } from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -27,7 +27,7 @@ export default function Footer() {
       title: "Connect",
       links: [
         { label: "Social Media", href: "https://twitter.com", icon: <Share2 className="w-3 h-3" /> },
-        { label: "GitHub", href: "https://github.com", icon: <Github className="w-3 h-3" /> },
+        { label: "GitHub", href: "https://github.com/shadesvinay01/brutallyhonest_new", icon: <GitBranch className="w-3 h-3" /> },
         { label: "Contact", href: "mailto:support@brutallyhonest.xyz", icon: <Mail className="w-3 h-3" /> },
       ],
     },
@@ -61,11 +61,12 @@ export default function Footer() {
               </motion.a>
               <motion.a 
                 whileHover={{ y: -2, color: "#D4AF37" }}
-                href="#" 
+                href="https://github.com/shadesvinay01/brutallyhonest_new" 
                 className="text-white/20 transition-colors"
                 aria-label="GitHub"
+                target="_blank"
               >
-                <Github className="w-5 h-5" />
+                <GitBranch className="w-5 h-5" />
               </motion.a>
             </div>
           </div>
@@ -83,6 +84,7 @@ export default function Footer() {
                       whileHover={{ x: 4, color: "#FFF" }}
                       href={link.href}
                       className="text-white/40 text-xs font-black uppercase tracking-widest flex items-center gap-2 group transition-colors"
+                      target={link.href.startsWith("http") ? "_blank" : undefined}
                     >
                       {link.icon && <span className="opacity-0 group-hover:opacity-100 transition-opacity">{link.icon}</span>}
                       {link.label}
