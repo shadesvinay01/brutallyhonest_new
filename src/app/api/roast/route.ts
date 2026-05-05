@@ -1,43 +1,82 @@
 import { NextResponse } from "next/server";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { prisma } from "@/lib/prisma";
+
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY || "");
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { idea, isBrutal } = body;
+    const { idea, isBrutal, category } = body;
 
-    // Simulate AI thinking delay
-    await new Promise((resolve) => setTimeout(resolve, 2500));
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    // Logic based on System Prompt:
-    // If isBrutal = true: "Be extremely direct, critical, and brutally honest. Do not soften negative feedback."
-    // If isBrutal = false: "Be constructive, professional, and balanced in feedback."
+    const systemPrompt = `
+      You are the "Brutally Honest" AI Interrogator. Your job is to analyze startup ideas, decisions, or profiles.
+      
+      TONE:
+      ${isBrutal 
+        ? "Be extremely direct, critical, and brutally honest. Use sharp, edgy language. Do not soften negative feedback. Act like a high-stakes VC who has seen it all and has zero patience for fluff." 
+        : "Be constructive, professional, and balanced. Provide helpful feedback that identifies risks but also suggests clear paths forward."
+      }
 
-    const roastData = {
-      truthScore: isBrutal ? 12 : 45,
-      brutalRoast: isBrutal 
-        ? "This idea isn't new — you're entering a crowded space without a clear edge. You're solving a problem, but not one people are desperate enough to pay for. Your execution plan is practically non-existent."
-        : "While the concept has potential, the current market is highly saturated with established players. To succeed, you'll need a much stronger differentiation strategy and a clearer path to monetization.",
-      competitorAnalysis: [
-        { name: "Existing Giant", whatTheyDo: "Dominates the general market with massive scale.", whyTheyreStrong: "Infinite budget and deep user trust." },
-        { name: "Niche Player", whatTheyDo: "Specializes in your specific feature set.", whyTheyreStrong: "Fast execution and high community engagement." },
-        { name: "Startup X", whatTheyDo: "Recent VC darling with high growth.", whyTheyreStrong: "Highly aggressive user acquisition strategy." }
-      ],
-      marketInsight: {
-        targetUsers: "Early stage founders / Indie Hackers",
-        demandLevel: isBrutal ? "Low (High Saturation)" : "Medium (Fragmented)",
-        problemClarity: isBrutal ? "Low (Solution in search of a problem)" : "Moderate (Needs Refinement)"
-      },
-      improvementPlan: {
-        differentiation: "Stop targeting 'everyone'. Focus on a hyper-niche segment like students or creators first.",
-        keyFeature: "Add a 'Validation Score' system that compares ideas against historical market data.",
-        positioning: "Position as a 'Risk Mitigation Tool' rather than a 'Feedback App'.",
-        gtm: "Start with tech communities like Product Hunt or Indie Hackers to build social proof."
-      },
-      monetizationIdeas: ["Tiered Subscription ($9/mo)", "Premium Deep-Dive Reports", "Expert Analysis Upsell"]
-    };
+      CONTEXT:
+      Category: ${category || "General"}
+      Input: "${idea}"
+
+      OUTPUT FORMAT:
+      You MUST return a JSON object with the following structure:
+      {
+        "truthScore": number (0-100, where 100 is high potential/truth),
+        "brutalRoast": "string (the main feedback text)",
+        "competitorAnalysis": [
+          { "name": "string", "whatTheyDo": "string", "whyTheyreStrong": "string" }
+        ],
+        "marketInsight": {
+          "targetUsers": "string",
+          "demandLevel": "string",
+          "problemClarity": "string"
+        },
+        "improvementPlan": {
+          "differentiation": "string",
+          "keyFeature": "string",
+          "positioning": "string",
+          "gtm": "string"
+        },
+        "monetizationIdeas": ["string", "string", "string"]
+      }
+
+      IMPORTANT: Return ONLY the JSON object. No markdown formatting, no preamble.
+    `;
+
+    const result = await model.generateContent(systemPrompt);
+    const response = await result.response;
+    const text = response.text();
+    
+    // Clean up potential markdown code blocks from AI response
+    const jsonString = text.replace(/```json|```/g, "").trim();
+    const roastData = JSON.parse(jsonString);
+
+    // Save to database
+    try {
+      await prisma.roast.create({
+        data: {
+          idea,
+          category: category || "General",
+          isBrutal,
+          truthScore: roastData.truthScore,
+          brutalRoast: roastData.brutalRoast,
+          fullData: roastData,
+        },
+      });
+    } catch (dbError) {
+      console.error("Database Save Error:", dbError);
+      // We don't fail the request if DB save fails, but we log it
+    }
 
     return NextResponse.json(roastData);
   } catch (error) {
-    return NextResponse.json({ error: "Failed to generate roast" }, { status: 500 });
+    console.error("AI Generation Error:", error);
+    return NextResponse.json({ error: "The truth is too heavy right now. Try again." }, { status: 500 });
   }
 }

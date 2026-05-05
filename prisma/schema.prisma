@@ -1,0 +1,27 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Roast {
+  id                String   @id @default(cuid())
+  idea              String
+  category          String
+  isBrutal          Boolean
+  truthScore        Int
+  brutalRoast       String   @db.Text
+  fullData          Json     // Stores the structured AI response
+  createdAt         DateTime @default(now())
+  
+  // Optional: User association for later
+  // userId         String?
+}
