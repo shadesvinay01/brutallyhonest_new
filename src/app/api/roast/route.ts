@@ -49,34 +49,56 @@ export async function POST(req: Request) {
       IMPORTANT: Return ONLY the JSON object. No markdown formatting, no preamble.
     `;
 
-    const result = await model.generateContent(systemPrompt);
-    const response = await result.response;
-    const text = response.text();
-    
-    // Clean up potential markdown code blocks from AI response
-    const jsonString = text.replace(/```json|```/g, "").trim();
-    const roastData = JSON.parse(jsonString);
+    const result = await model.generateContentStream(systemPrompt);
 
-    // Save to database
-    try {
-      await prisma.roast.create({
-        data: {
-          idea,
-          category: category || "General",
-          isBrutal,
-          truthScore: roastData.truthScore,
-          brutalRoast: roastData.brutalRoast,
-          fullData: roastData,
-        },
-      });
-    } catch (dbError) {
-      console.error("Database Save Error:", dbError);
-      // We don't fail the request if DB save fails, but we log it
-    }
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      async start(controller) {
+        let fullResponse = "";
+        
+        try {
+          for await (const chunk of result.stream) {
+            const chunkText = chunk.text();
+            fullResponse += chunkText;
+            controller.enqueue(encoder.encode(chunkText));
+          }
 
-    return NextResponse.json(roastData);
+          // After stream completes, try to save to DB
+          try {
+            const jsonString = fullResponse.replace(/```json|```/g, "").trim();
+            const roastData = JSON.parse(jsonString);
+
+            await prisma.roast.create({
+              data: {
+                idea,
+                category: category || "General",
+                isBrutal,
+                truthScore: roastData.truthScore,
+                brutalRoast: roastData.brutalRoast,
+                fullData: roastData,
+              },
+            });
+          } catch (dbError) {
+            console.error("Background Database Save Error:", dbError);
+          }
+
+          controller.close();
+        } catch (streamError) {
+          console.error("Stream processing error:", streamError);
+          controller.error(streamError);
+        }
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+      },
+    });
   } catch (error) {
-    console.error("AI Generation Error:", error);
+    console.error("AI Streaming Error:", error);
     return NextResponse.json({ error: "The truth is too heavy right now. Try again." }, { status: 500 });
   }
 }

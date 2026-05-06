@@ -25,8 +25,8 @@ export default function Home() {
   const [result, setResult] = useState<any>(null);
   const [inputIntensity, setInputIntensity] = useState(0);
   const [isBrutal, setIsBrutal] = useState(true);
-
   const [selectedCategory, setSelectedCategory] = useState("startup");
+  const [streamingText, setStreamingText] = useState("");
 
   const handleStart = (category: string = "startup") => {
     setSelectedCategory(category);
@@ -37,18 +37,40 @@ export default function Home() {
   const handleSubmit = async (formData: any) => {
     setIsBrutal(formData.isBrutal);
     setState("LOADING");
+    setStreamingText("");
     
     try {
-      // We pass the isBrutal flag to the API for tone control
       const response = await fetch("/api/roast", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-      const data = await response.json();
+
+      if (!response.body) throw new Error("No response body");
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let accumulatedResponse = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        accumulatedResponse += chunk;
+
+        // Try to extract the roast text from partial JSON
+        // This is a simple regex to find content between "brutalRoast":" and "
+        const roastMatch = accumulatedResponse.match(/"brutalRoast"\s*:\s*"([^"]*)"?/);
+        if (roastMatch && roastMatch[1]) {
+          setStreamingText(roastMatch[1]);
+        }
+      }
+
+      // Cleanup and parse final response
+      const jsonString = accumulatedResponse.replace(/```json|```/g, "").trim();
+      const data = JSON.parse(jsonString);
       
-      // If the API doesn't support the new 5-card structure yet, 
-      // ResultsDisplay will use its fallbacks.
       setResult(data);
       setState("RESULTS");
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -144,7 +166,7 @@ export default function Home() {
               transition={{ duration: 0.3 }}
               className="pt-32"
             >
-              <LoadingState />
+              <LoadingState streamingText={streamingText} />
             </motion.div>
           )}
 
