@@ -1,8 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
+// Brutally Honest Platform - Full Schema
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,16 +9,106 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum ReactionType {
+  SAVAGE
+  ACCURATE
+  HELPFUL
+}
+
+enum NotificationType {
+  NEW_REACTION
+  NEW_ROAST
+  STREAK_MILESTONE
+  LEVEL_UP
+  CREDIT_LOW
+}
+
+model User {
+  id              String         @id @default(cuid())
+  email           String         @unique
+  username        String?        @unique
+  avatarUrl       String?
+  xp              Int            @default(0)
+  level           Int            @default(1)
+  credits         Int            @default(5)
+  streakCount     Int            @default(0)
+  lastLogin       DateTime?
+  credibilityScore Int           @default(100)
+  isPro           Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  products        Product[]
+  roasts          Roast[]
+  reactions       Reaction[]
+  notifications   Notification[]
+
+  @@map("users")
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  url         String?
+  category    String   @default("General")
+  ownerId     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  owner  User    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  roasts Roast[]
+
+  @@map("products")
+}
+
 model Roast {
-  id                String   @id @default(cuid())
-  idea              String
-  category          String
-  isBrutal          Boolean
-  truthScore        Int
-  brutalRoast       String   @db.Text
-  fullData          Json     // Stores the structured AI response
-  createdAt         DateTime @default(now())
-  
-  // Optional: User association for later
-  // userId         String?
+  id           String   @id @default(cuid())
+  idea         String
+  category     String
+  isBrutal     Boolean
+  truthScore   Int
+  brutalRoast  String   @db.Text
+  fullData     Json
+  mode         String   @default("standard") // standard | investor_memo | multiple_realities
+  isPublic     Boolean  @default(true)
+  viewCount    Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  userId    String?
+  productId String?
+
+  user      User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  product   Product?   @relation(fields: [productId], references: [id], onDelete: SetNull)
+  reactions Reaction[]
+
+  @@map("roasts")
+}
+
+model Reaction {
+  id        String       @id @default(cuid())
+  type      ReactionType
+  roastId   String
+  userId    String
+  createdAt DateTime     @default(now())
+
+  roast Roast @relation(fields: [roastId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([roastId, userId]) // One reaction per user per roast
+  @@map("reactions")
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  type      NotificationType
+  message   String
+  readStatus Boolean         @default(false)
+  metadata  Json?
+  userId    String
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
 }
