@@ -6,10 +6,10 @@ import { awardXPForReaction, updateCredibilityScore } from "@/lib/gamification";
 // Body: { userId: string, type: "SAVAGE" | "ACCURATE" | "HELPFUL" }
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const roastId = params.id;
+    const { id: roastId } = await params; // Next.js 15+: params is a Promise
     const body = await req.json();
     const { userId, type } = body;
 
@@ -35,7 +35,7 @@ export async function POST(
       create: { roastId, userId, type },
     });
 
-    // Award XP to roast owner if they exist
+    // Award XP to roast owner if they exist and it's not a self-reaction
     if (roast.userId && roast.userId !== userId) {
       await awardXPForReaction(roast.userId, type);
       await updateCredibilityScore(roast.userId);
@@ -73,12 +73,14 @@ export async function POST(
 // GET /api/roasts/[id]/react — get reaction counts
 export async function GET(
   _req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: roastId } = await params; // Next.js 15+: params is a Promise
+
     const counts = await prisma.reaction.groupBy({
       by: ["type"],
-      where: { roastId: params.id },
+      where: { roastId },
       _count: { type: true },
     });
 

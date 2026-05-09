@@ -1,9 +1,25 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// Simple in-memory rate limiter (production: swap for Upstash Redis)
-// For Upstash: npm install @upstash/ratelimit @upstash/redis
+// In-memory rate limiter (effective for single-instance / local dev)
+// TODO for production on Vercel: replace with Upstash Redis
+// npm install @upstash/ratelimit @upstash/redis
+// See: https://github.com/upstash/ratelimit-js
 const ipRequestMap = new Map<string, { count: number; resetAt: number }>();
+
+// Periodically purge expired entries to prevent unbounded memory growth.
+// On serverless this runs per-instance, but that's acceptable for a dev guard.
+const CLEANUP_INTERVAL_MS = 5 * 60 * 1000; // every 5 minutes
+let lastCleanup = Date.now();
+
+function maybeCleanupMap() {
+  const now = Date.now();
+  if (now - lastCleanup < CLEANUP_INTERVAL_MS) return;
+  lastCleanup = now;
+  for (const [key, entry] of ipRequestMap.entries()) {
+    if (entry.resetAt < now) ipRequestMap.delete(key);
+  }
+}
 
 const RATE_LIMITS: Record<string, { requests: number; windowMs: number }> = {
   "/api/roast": { requests: 5, windowMs: 60_000 },       // 5 per minute
@@ -19,6 +35,8 @@ function getRateLimitConfig(pathname: string) {
 }
 
 export function middleware(req: NextRequest) {
+  maybeCleanupMap();
+
   const pathname = req.nextUrl.pathname;
   const config = getRateLimitConfig(pathname);
 

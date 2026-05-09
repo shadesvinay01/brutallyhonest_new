@@ -96,7 +96,7 @@ export async function GET(req: NextRequest) {
             paddingLeft: "24px",
           }}
         >
-          &ldquo;{truncatedQuote}&rdquo;
+          {`\u201c${truncatedQuote}\u201d`}
         </div>
 
         {/* Footer */}

@@ -21,6 +21,7 @@ enum NotificationType {
   STREAK_MILESTONE
   LEVEL_UP
   CREDIT_LOW
+  CREDIT_ADDED
 }
 
 model User {

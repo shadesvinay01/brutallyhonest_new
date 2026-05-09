@@ -1,9 +1,14 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import Stripe from "stripe";
 
 // Stripe webhook for credit top-ups and pro upgrades
 // Set endpoint in Stripe Dashboard → Developers → Webhooks
 // Events to listen: checkout.session.completed, customer.subscription.deleted
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2024-11-20.acacia",
+});
 
 const CREDIT_PACKAGES: Record<string, number> = {
   price_credits_10: 10,
@@ -11,20 +16,34 @@ const CREDIT_PACKAGES: Record<string, number> = {
   price_credits_100: 100,
 };
 
+// Required: disable body parsing so we get the raw buffer for signature verification
+export const config = {
+  api: { bodyParser: false },
+};
+
 export async function POST(req: Request) {
   try {
     const body = await req.text();
     const sig = req.headers.get("stripe-signature");
 
-    // In production: verify Stripe signature
-    // const event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
-    // For now, parse directly:
-    const event = JSON.parse(body);
+    if (!sig || !process.env.STRIPE_WEBHOOK_SECRET) {
+      console.error("[Stripe] Missing signature or webhook secret");
+      return NextResponse.json({ error: "Missing signature" }, { status: 400 });
+    }
+
+    // Verify the event came from Stripe — prevents spoofed webhook attacks
+    let event: Stripe.Event;
+    try {
+      event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    } catch (err) {
+      console.error("[Stripe] Signature verification failed:", err);
+      return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
+    }
 
     if (event.type === "checkout.session.completed") {
-      const session = event.data.object;
+      const session = event.data.object as Stripe.Checkout.Session;
       const userId = session.metadata?.userId;
-      const priceId = session.metadata?.priceId || session.line_items?.data?.[0]?.price?.id;
+      const priceId = session.metadata?.priceId;
       const plan = session.metadata?.plan;
 
       if (!userId) {
@@ -55,7 +74,7 @@ export async function POST(req: Request) {
         await prisma.notification.create({
           data: {
             userId,
-            type: "NEW_ROAST",
+            type: "CREDIT_ADDED", // Semantically correct type
             message: `💳 ${creditsToAdd} Honesty Credits added to your account!`,
           },
         });
@@ -63,12 +82,19 @@ export async function POST(req: Request) {
     }
 
     if (event.type === "customer.subscription.deleted") {
-      const subscription = event.data.object;
+      const subscription = event.data.object as Stripe.Subscription;
       const userId = subscription.metadata?.userId;
       if (userId) {
         await prisma.user.update({
           where: { id: userId },
           data: { isPro: false },
+        });
+        await prisma.notification.create({
+          data: {
+            userId,
+            type: "CREDIT_LOW",
+            message: "⚠️ Your Pro subscription has ended. Upgrade to restore full power.",
+          },
         });
       }
     }

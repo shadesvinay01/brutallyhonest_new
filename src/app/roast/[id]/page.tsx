@@ -4,9 +4,16 @@ import type { Metadata } from "next";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://brutallyhonest.app";
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+// Next.js 15+: params is a Promise in both generateMetadata and page component
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+
   const roast = await prisma.roast.findUnique({
-    where: { id: params.id },
+    where: { id },
     select: { idea: true, truthScore: true, brutalRoast: true },
   });
 
@@ -32,17 +39,22 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   };
 }
 
-export default async function RoastPage({ params }: { params: { id: string } }) {
+export default async function RoastPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+
   const roast = await prisma.roast.findUnique({
-    where: { id: params.id, isPublic: true },
+    where: { id, isPublic: true },
   });
 
   if (!roast) notFound();
 
   // Increment view count
-  await prisma.roast.update({ where: { id: params.id }, data: { viewCount: { increment: 1 } } });
+  await prisma.roast.update({ where: { id }, data: { viewCount: { increment: 1 } } });
 
-  const data = roast.fullData as Record<string, unknown>;
   const score = roast.truthScore;
   const scoreColor = score < 20 ? "#ff2d2d" : score < 50 ? "#ff7c00" : score < 75 ? "#ffd700" : "#00ff88";
 

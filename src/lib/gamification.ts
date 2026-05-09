@@ -139,9 +139,22 @@ export async function awardXPForReaction(
 
   const newXP = user.xp + xpGain;
   const newLevel = getLevelFromXP(newXP);
+  const leveledUp = newLevel > user.level;
 
   await prisma.user.update({
     where: { id: roastOwnerUserId },
     data: { xp: newXP, level: newLevel },
   });
+
+  // Notify on level-up, consistent with awardXPForRoast
+  if (leveledUp) {
+    await prisma.notification.create({
+      data: {
+        userId: roastOwnerUserId,
+        type: "LEVEL_UP",
+        message: `🔥 You hit Level ${newLevel}! Your credibility is skyrocketing.`,
+      },
+    });
+  }
 }
+
