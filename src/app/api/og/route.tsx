@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
 
-export const runtime = "edge";
+
 
 // GET /api/og?score=12&quote=Your+idea+is+dead&roastId=abc
 export async function GET(req: NextRequest) {

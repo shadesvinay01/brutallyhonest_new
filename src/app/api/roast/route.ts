@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { awardXPForRoast } from "@/lib/gamification";
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY || "");
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY || "dummy_key");
 
 // ── Credit gate helper ─────────────────────────────────────────────────────
 async function checkAndDeductCredits(userId: string, cost = 1): Promise<boolean> {

@@ -14,14 +14,19 @@ export default async function sitemap() {
 
   // Cap at 200 most-recent public roasts to prevent timeout on large DBs.
   // For full coverage, implement paginated sitemaps (sitemap index).
-  const roasts = await prisma.roast.findMany({
-    where: { isPublic: true },
-    select: { id: true, createdAt: true },
-    orderBy: { createdAt: "desc" },
-    take: 200,
-  });
+  let roasts: any[] = [];
+  try {
+    roasts = await prisma.roast.findMany({
+      where: { isPublic: true },
+      select: { id: true, createdAt: true },
+      orderBy: { createdAt: "desc" },
+      take: 200,
+    });
+  } catch (error) {
+    console.error("Failed to fetch roasts for sitemap:", error);
+  }
 
-  const roastRoutes = roasts.map((r) => ({
+  const roastRoutes = roasts.map((r: any) => ({
     url: `${BASE_URL}/roast/${r.id}`,
     lastModified: r.createdAt,
     changeFrequency: "never" as const,

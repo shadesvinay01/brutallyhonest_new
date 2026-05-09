@@ -6,8 +6,8 @@ import Stripe from "stripe";
 // Set endpoint in Stripe Dashboard → Developers → Webhooks
 // Events to listen: checkout.session.completed, customer.subscription.deleted
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-11-20.acacia",
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_dummy", {
+  apiVersion: "2025-02-24.acacia",
 });
 
 const CREDIT_PACKAGES: Record<string, number> = {
@@ -16,10 +16,7 @@ const CREDIT_PACKAGES: Record<string, number> = {
   price_credits_100: 100,
 };
 
-// Required: disable body parsing so we get the raw buffer for signature verification
-export const config = {
-  api: { bodyParser: false },
-};
+
 
 export async function POST(req: Request) {
   try {
