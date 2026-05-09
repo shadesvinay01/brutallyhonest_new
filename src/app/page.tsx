@@ -50,25 +50,48 @@ export default function Home() {
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
-      let accumulatedResponse = "";
+      let reconstructedAIResponse = "";
+      let buffer = "";
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
-        const chunk = decoder.decode(value, { stream: true });
-        accumulatedResponse += chunk;
+        buffer += decoder.decode(value, { stream: true });
+        
+        // SSE messages are separated by \n\n
+        const lines = buffer.split("\n\n");
+        // Keep the last partial line in the buffer
+        buffer = lines.pop() || "";
 
-        // Try to extract the roast text from partial JSON
-        // This is a simple regex to find content between "brutalRoast":" and "
-        const roastMatch = accumulatedResponse.match(/"brutalRoast"\s*:\s*"([^"]*)"?/);
-        if (roastMatch && roastMatch[1]) {
-          setStreamingText(roastMatch[1]);
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              if (data.chunk) {
+                reconstructedAIResponse += data.chunk;
+                
+                // Try to extract the roast text from partial JSON
+                // Using a more robust approach: find the value of "brutalRoast"
+                const roastMatch = reconstructedAIResponse.match(/"brutalRoast"\s*:\s*"([^"]*)"?/);
+                if (roastMatch && roastMatch[1]) {
+                  // Unescape common characters if necessary, but browser does most
+                  setStreamingText(roastMatch[1]);
+                }
+              }
+              if (data.done) {
+                // We could use data.roastId here if needed
+              }
+            } catch (e) {
+              console.warn("Failed to parse SSE chunk", e);
+            }
+          }
         }
       }
 
       // Cleanup and parse final response
-      const jsonString = accumulatedResponse.replace(/```json|```/g, "").trim();
+      // Remove any markdown code blocks if the AI included them
+      const jsonString = reconstructedAIResponse.replace(/```json|```/g, "").trim();
       const data = JSON.parse(jsonString);
       
       setResult(data);
