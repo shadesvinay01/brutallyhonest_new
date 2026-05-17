@@ -27,6 +27,7 @@ export default function Home() {
   const [isBrutal, setIsBrutal] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("startup");
   const [streamingText, setStreamingText] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleStart = (category: string = "startup") => {
     setSelectedCategory(category);
@@ -38,6 +39,7 @@ export default function Home() {
     setIsBrutal(formData.isBrutal);
     setState("LOADING");
     setStreamingText("");
+    setErrorMessage(null);
     
     try {
       const response = await fetch("/api/roast", {
@@ -45,6 +47,11 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.error || `Server responded with status ${response.status}`);
+      }
 
       if (!response.body) throw new Error("No response body");
 
@@ -68,22 +75,24 @@ export default function Home() {
           if (line.startsWith("data: ")) {
             try {
               const data = JSON.parse(line.slice(6));
+              // Handle server-sent error events (e.g. stream crash, DB error)
+              if (data.error) {
+                throw new Error(data.error);
+              }
               if (data.chunk) {
                 reconstructedAIResponse += data.chunk;
-                
                 // Try to extract the roast text from partial JSON
-                // Using a more robust approach: find the value of "brutalRoast"
                 const roastMatch = reconstructedAIResponse.match(/"brutalRoast"\s*:\s*"([^"]*)"?/);
                 if (roastMatch && roastMatch[1]) {
-                  // Unescape common characters if necessary, but browser does most
                   setStreamingText(roastMatch[1]);
                 }
               }
               if (data.done) {
-                // We could use data.roastId here if needed
+                // roastId available at data.roastId for reactions
               }
             } catch (e) {
               console.warn("Failed to parse SSE chunk", e);
+              throw e; // re-throw so outer catch handles it
             }
           }
         }
@@ -92,13 +101,20 @@ export default function Home() {
       // Cleanup and parse final response
       // Remove any markdown code blocks if the AI included them
       const jsonString = reconstructedAIResponse.replace(/```json|```/g, "").trim();
+
+      if (!jsonString) {
+        throw new Error("The AI returned an empty response. Please try again.");
+      }
+
       const data = JSON.parse(jsonString);
       
       setResult(data);
       setState("RESULTS");
       window.scrollTo({ top: 0, behavior: "smooth" });
-    } catch (error) {
-      console.error("Failed to roast idea:", error);
+    } catch (error: any) {
+      const msg = error?.message || "Something went wrong. Please try again.";
+      console.error("Failed to roast idea:", msg);
+      setErrorMessage(msg);
       setState("FORM");
     }
   };
@@ -172,6 +188,15 @@ export default function Home() {
               transition={{ duration: 0.3 }}
               className="pt-20"
             >
+              {errorMessage && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-6 mx-auto max-w-2xl bg-red-900/40 border border-red-500/50 text-red-300 text-sm font-mono px-5 py-4 rounded-lg"
+                >
+                  ⚠️ {errorMessage}
+                </motion.div>
+              )}
               <IdeaForm 
                 onSubmit={handleSubmit} 
                 onInputChange={setInputIntensity} 

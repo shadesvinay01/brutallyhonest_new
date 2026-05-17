@@ -3,7 +3,12 @@ import { prisma } from "@/lib/prisma";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { awardXPForRoast } from "@/lib/gamification";
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY || "dummy_key");
+// Guard: fail fast with a clear JSON message if the key is missing
+if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+  console.error("[Roast] GOOGLE_GENERATIVE_AI_API_KEY is not set.");
+}
+
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY ?? "");
 
 // ── Credit gate helper ─────────────────────────────────────────────────────
 async function checkAndDeductCredits(userId: string, cost = 1): Promise<boolean> {
@@ -102,6 +107,16 @@ async function scrapeUrlMetadata(url: string): Promise<string> {
 
 // ── Main route ─────────────────────────────────────────────────────────────
 export async function POST(req: Request) {
+  // Return a proper JSON error immediately if critical env vars are absent.
+  // This prevents the server from returning an empty body, which causes
+  // "SyntaxError: Unexpected end of JSON input" in the browser.
+  if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+    return NextResponse.json(
+      { error: "Server misconfiguration: AI key is missing. Contact support." },
+      { status: 503 }
+    );
+  }
+
   try {
     const body = await req.json();
     const { idea, isBrutal, category, mode = "standard", userId, url } = body;
@@ -183,7 +198,16 @@ export async function POST(req: Request) {
           controller.close();
         } catch (streamErr) {
           console.error("[Roast] Stream error:", streamErr);
-          controller.error(streamErr);
+          // Send a JSON-encoded error event so the client can parse it instead
+          // of receiving a truncated stream that triggers JSON.parse crash.
+          try {
+            controller.enqueue(
+              encoder.encode(
+                `data: ${JSON.stringify({ error: "AI stream failed. Please try again." })}\n\n`
+              )
+            );
+          } catch (_) {/* ignore secondary error */}
+          controller.close();
         }
       },
     });

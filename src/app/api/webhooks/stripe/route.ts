@@ -6,15 +6,22 @@ import Stripe from "stripe";
 // Set endpoint in Stripe Dashboard → Developers → Webhooks
 // Events to listen: checkout.session.completed, customer.subscription.deleted
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_dummy", {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2025-02-24.acacia",
 });
 
-const CREDIT_PACKAGES: Record<string, number> = {
-  price_credits_10: 10,
-  price_credits_50: 50,
-  price_credits_100: 100,
-};
+// Maps real Stripe Price IDs (from env) → credits to award.
+// NEXT_PUBLIC_STRIPE_PRICE_CREDITS_10, _50, _100 must match your Stripe dashboard.
+function getCreditPackages(): Record<string, number> {
+  const map: Record<string, number> = {};
+  if (process.env.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_10)
+    map[process.env.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_10] = 10;
+  if (process.env.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_50)
+    map[process.env.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_50] = 50;
+  if (process.env.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_100)
+    map[process.env.NEXT_PUBLIC_STRIPE_PRICE_CREDITS_100] = 100;
+  return map;
+}
 
 
 
@@ -61,20 +68,22 @@ export async function POST(req: Request) {
             message: "🎉 Welcome to Pro! You now have unlimited savage power.",
           },
         });
-      } else if (priceId && CREDIT_PACKAGES[priceId]) {
-        // Credit top-up
-        const creditsToAdd = CREDIT_PACKAGES[priceId];
+      } else if (priceId) {
+        const CREDIT_PACKAGES = getCreditPackages();
+        if (CREDIT_PACKAGES[priceId]) {
+          const creditsToAdd = CREDIT_PACKAGES[priceId];
         await prisma.user.update({
           where: { id: userId },
           data: { credits: { increment: creditsToAdd } },
         });
-        await prisma.notification.create({
-          data: {
-            userId,
-            type: "CREDIT_ADDED", // Semantically correct type
-            message: `💳 ${creditsToAdd} Honesty Credits added to your account!`,
-          },
-        });
+          await prisma.notification.create({
+            data: {
+              userId,
+              type: "CREDIT_ADDED",
+              message: `💳 ${creditsToAdd} Honesty Credits added to your account!`,
+            },
+          });
+        }
       }
     }
 
