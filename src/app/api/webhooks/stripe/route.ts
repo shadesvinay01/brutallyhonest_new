@@ -6,9 +6,15 @@ import Stripe from "stripe";
 // Set endpoint in Stripe Dashboard → Developers → Webhooks
 // Events to listen: checkout.session.completed, customer.subscription.deleted
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2025-02-24.acacia",
-});
+function getStripe() {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) {
+    throw new Error("STRIPE_SECRET_KEY is not set in environment variables.");
+  }
+  return new Stripe(key, {
+    apiVersion: "2025-02-24.acacia",
+  });
+}
 
 // Maps real Stripe Price IDs (from env) → credits to award.
 // NEXT_PUBLIC_STRIPE_PRICE_CREDITS_10, _50, _100 must match your Stripe dashboard.
@@ -38,6 +44,7 @@ export async function POST(req: Request) {
     // Verify the event came from Stripe — prevents spoofed webhook attacks
     let event: Stripe.Event;
     try {
+      const stripe = getStripe();
       event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET);
     } catch (err) {
       console.error("[Stripe] Signature verification failed:", err);
